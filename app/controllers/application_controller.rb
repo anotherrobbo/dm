@@ -4,4 +4,13 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   
   @@apikey = "950901f3a7b24a1082a9d47bb7b0a1b3"
+  @@bungieURL = "http://www.bungie.net"
+  @@log = Logger.new(STDOUT)
+  
+  protected def jsonCall(url)
+    response = RestClient.get(url, {"X-API-Key" => @@apikey})
+    json = response.body
+    data = JSON.parse(json)
+    return data;
+  end
 end

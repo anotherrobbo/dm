@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  get 'welcome/index'
+
+  get 'search' => 'search#search'
   get 'overview/:system/:name' => 'overview#show'
+  get 'match/:system/:name/:name2' => 'match#matchPlayers'
+  get 'match/games/:systemCode/:id/:id2' => 'match#matchGames'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
