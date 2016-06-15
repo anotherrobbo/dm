@@ -10,7 +10,7 @@ class SearchController < ApplicationController
     private def getResponses(name)
         data = jsonCall(@@bungieURL + "/Platform/Destiny/SearchDestinyPlayer/All/#{name}/")
         #@@log.info(data["Response"].empty?)
-        return data["Response"]
+        return noErrors(data) ? data["Response"] : Array.new
     end
     
     private def parseResponses(responses)
@@ -31,6 +31,7 @@ class SearchController < ApplicationController
         end
         p.name = member["displayName"]
         p.id = member["membershipId"]
+        p.systemIcon = @@bungieURL + member["iconPath"]
         return p
     end
 end

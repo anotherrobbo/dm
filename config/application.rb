@@ -22,5 +22,12 @@ module Dm
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
+    
+    # Set root context for URLs
+    config.relative_url_root = "/dm"
+    
+    # Use an in memory cache
+    #config.cache_store = :memory_store
+    
   end
 end

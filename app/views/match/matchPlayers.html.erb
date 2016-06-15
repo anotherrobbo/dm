@@ -1,8 +1,24 @@
-<h1>Matches</h1>
-<p><%= @model.name %> v <%= @model2.name %></p>
-<input id="systemCode" type="hidden" value="<%= @model.systemCode %>">
-<input id="id" type="hidden" value="<%= @model.id %>">
-<input id="id2" type="hidden" value="<%= @model2.id %>">
-<span class="loading-spinner glyphicon glyphicon-refresh glyphicon-spin"></span>
-<div id="matchCount"></div>
-<div id="matches"></div>
+<div class="container">
+    <div class="page-header" id="banner">
+        <h1>Matches</h1>
+    </div>
+    <input id="systemCode" type="hidden" value="<%= @model.systemCode %>">
+    <input id="id" type="hidden" value="<%= @model.id %>">
+    <input id="id2" type="hidden" value="<%= @model2.id %>">
+    <div class="row">
+        <div class="col-lg-6">
+            <h4><%= @model.name %> v <%= @model2.name %></h4>
+        </div>
+    </div>
+    <span class="loading-spinner glyphicon glyphicon-refresh glyphicon-spin"></span>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="matchCount"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="matches" class="panel-group"></div>
+        </div>
+    </div>
+</div>

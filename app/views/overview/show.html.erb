@@ -1,8 +1,32 @@
-<h1>SHOW</h1>
-<p><%= @model.name %></p>
-<p><%= @model.system %></p>
-<p><%= @model.systemCode %></p>
-<p><%= @model.id %></p>
-<input type="hidden" id="system" value="<%= @model.system %>" />
-<input type="hidden" id="name" value="<%= @model.name %>" />
-<input id="un2" class="un" type="text" placeholder="un2" /><button id="submit" type="button" class="btn btn-default">Submit</button>
+<div class="container">
+    <div class="page-header" id="banner">
+        <h1>SHOW</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><%= @model.name %></div>
+                <div class="panel-body"><%= @model.system %></div>
+                <div class="panel-body"><%= @model.systemCode %></div>
+                <div class="panel-body"><%= @model.id %></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <form id="search-form">    
+            <div class="form-group">
+                <input type="hidden" id="system" value="<%= @model.system %>" />
+                <input type="hidden" id="name" value="<%= @model.name %>" />
+                <label class="control-label">Un2</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="un2" placeholder="un2" required>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit" id="submit">Button</button>
+                    </span>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

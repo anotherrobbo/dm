@@ -28,8 +28,11 @@ class PlayerController < ApplicationController
     
     protected def getChars(systemCode, id)
         data = jsonCall(@@bungieURL + "/Platform/Destiny/#{systemCode}/Account/#{id}/Summary/")
+        #@@log.info(data)
         chars = Array.new
-        data["Response"]["data"]["characters"].each { |char| chars.push(createChar(char)) }
+        if noErrors(data)
+            data["Response"]["data"]["characters"].each { |char| chars.push(createChar(char)) }
+        end
         return chars
     end
     

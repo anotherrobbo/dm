@@ -14,8 +14,12 @@ class MatchController < PlayerController
     def matchGames
         @activityIcons = Hash.new
         @activityNames = Hash.new
-        g1 = getGames(params[:systemCode], params[:id], getChars(params[:systemCode], params[:id]))
-        g2 = getGames(params[:systemCode], params[:id2], getChars(params[:systemCode], params[:id2]))
+        g1 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id]) do
+            getGames(params[:systemCode], params[:id], getChars(params[:systemCode], params[:id]))
+        end
+        g2 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id2]) do
+            getGames(params[:systemCode], params[:id2], getChars(params[:systemCode], params[:id2]))
+        end
         matches = getMatches(g1, g2)
         # Reverse sort by time
         matches.sort! { |a, b| b.time <=> a.time }
@@ -30,7 +34,7 @@ class MatchController < PlayerController
             #@@log.info(char)
             while 1
                 @@log.info("#{page} - #{char.id}")
-                defs = @activityIcons.empty?
+                defs = false#@activityIcons.empty?
                 #@@log.info(defs)
                 data = jsonCall(@@bungieURL + "/Platform/Destiny/Stats/ActivityHistory/#{systemCode}/#{id}/#{char.id}/?definitions=#{defs}&mode=None&page=#{page}&count=#{count}")
                 # Break if we've reached a page with no data
@@ -38,44 +42,67 @@ class MatchController < PlayerController
                     break
                 end
                 data["Response"]["data"]["activities"].each do |act|
-                    games[act["activityDetails"]["instanceId"]] = act
+                    a = Activity.new
+                    a.id = act["activityDetails"]["instanceId"]
+                    a.period = act["period"]
+                    a.prefix = act["activityDetails"]["activityTypeHashOverride"] > 0 ? "activityType" : "activity"
+                    a.activityHash = act["activityDetails"]["activityTypeHashOverride"] > 0 ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
+                    a.result = act["values"]["standing"] != nil ? act["values"]["standing"]["basic"]["displayValue"][0] : nil
+                    games[a.id] = a
                 end
-                if data["Response"]["definitions"] != nil
+                #if data["Response"]["definitions"] != nil
                     #@@log.info("Loading Defs")
-                    loadIcons(data["Response"]["definitions"]["activities"], "activity")
-                    loadIcons(data["Response"]["definitions"]["activityTypes"], "activityType")
-                end
+                    #loadIcons(data["Response"]["definitions"]["activities"], "activity")
+                    #loadIcons(data["Response"]["definitions"]["activityTypes"], "activityType")
+                #end
                 page += 1
             end
         end
         return games
     end
     
-    private def loadIcons(activityTypes, prefix)
-        activityTypes.each do |at|
-            #@@log.info(at)
-            #@@log.info(at[1])
-            @activityIcons[at[1]["#{prefix}Hash"]] = @@bungieURL + at[1]["icon"]
-            @activityNames[at[1]["#{prefix}Hash"]] = at[1]["#{prefix}Name"]
-        end
-    end
+    #private def loadIcons(activityTypes, prefix)
+    #    activityTypes.each do |at|
+    #        #@@log.info(at)
+    #        #@@log.info(at[1])
+    #        @activityIcons[at[1]["#{prefix}Hash"]] = @@bungieURL + at[1]["icon"]
+    #        @activityNames[at[1]["#{prefix}Hash"]] = at[1]["#{prefix}Name"]
+    #    end
+    #end
     
     private def getMatches(g1, g2)
         matches = Array.new
         g1.each do |key, g|
             if g2.has_key?(key) 
                 #@@log.info(g["values"]["standing"])
-                a = Activity.new
-                a.id = key
-                a.time = DateTime.parse(g["period"])
-                a.activityHash = g["activityDetails"]["activityTypeHashOverride"] > 0 ? g["activityDetails"]["activityTypeHashOverride"] : g["activityDetails"]["referenceId"]
-                a.activityIcon = @activityIcons[a.activityHash]
-                a.activityName = @activityNames[a.activityHash]
-                a.result = g["values"]["standing"] != nil ? g["values"]["standing"]["basic"]["displayValue"] : nil
+                a = ActivityDetail.new
+                a.id = g.id
+                a.time = DateTime.parse(g.period)
+                a.prefix = g.prefix
+                a.activityHash = g.activityHash
+                a.activityIcon = getActivityIcon(a.prefix, a.activityHash)
+                a.activityName = getActivityName(a.prefix, a.activityHash)
+                a.result = g.result
                 matches.push(a)
             end
         end
         return matches
+    end
+    
+    private def getActivityIcon(prefix, actHash)
+        return @@bungieURL + getActivityDef(prefix, actHash)["icon"]
+    end
+    
+    private def getActivityName(prefix, actHash)
+        return getActivityDef(prefix, actHash)["#{prefix}Name"]
+    end
+    
+    private def getActivityDef(prefix, actHash)
+        return Rails.cache.fetch("#{prefix}|#{actHash}") do
+            @@log.info("Loading #{prefix}/#{actHash}")
+            data = jsonCall(@@bungieURL + "/Platform/Destiny/Manifest/#{prefix}/#{actHash}/")
+            data["Response"]["data"][prefix]
+        end
     end
 
 end

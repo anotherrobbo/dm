@@ -11,6 +11,11 @@ class ApplicationController < ActionController::Base
     response = RestClient.get(url, {"X-API-Key" => @@apikey})
     json = response.body
     data = JSON.parse(json)
-    return data;
+    return data
+  end
+  
+  protected def noErrors(data)
+    #@@log.info(data)
+    return data["ErrorCode"] == 1
   end
 end

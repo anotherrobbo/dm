@@ -2,8 +2,9 @@
 	var methods = {
 		// Initialise plugin.
 		init: function() {
-		    $('#submit').click(function() {
+		    $('#search-form').submit(function(event) {
 		        methods.go();
+                event.preventDefault();
 		    });
 		},
         
@@ -11,7 +12,7 @@
             var system = $('#system').val();
             var name = $('#name').val();
             var un2 = $('#un2').val();
-			window.location = '/match/' + system + '/' + name + '/' + un2;
+			window.location = rootUrl + 'match/' + system + '/' + name + '/' + un2;
 		}
 	};
 	

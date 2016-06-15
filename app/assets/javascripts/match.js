@@ -25,7 +25,7 @@ function padNum(num) {
         
         loadMatches: function() {
             $.ajax({
-				url:'/match/games/' + $("#systemCode").val() + '/' + $("#id").val() + '/' + $("#id2").val(),
+				url:rootUrl + 'match/games/' + $("#systemCode").val() + '/' + $("#id").val() + '/' + $("#id2").val(),
 				type:'GET',
                 //data:{'un':$('#un').val()},
 				success:function(data){
@@ -40,13 +40,15 @@ function padNum(num) {
         show: function(matches) {
             var matchOutput = '';
             for (i in matches) {
-                matchOutput += '<div class="match">';
-                matchOutput += '<div class="date">' + convertDateString(matches[i].time) + '</div>';
-                matchOutput += '<img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" />';
+                matchOutput += '<div class="panel panel-default match">';
+                matchOutput += '<div class="panel-heading" data-toggle="collapse" data-target="#cd-' + matches[i].id + '"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" /> ';
+                matchOutput += convertDateString(matches[i].time);
+                matchOutput += '</div>';
+                matchOutput += '<div class="panel-collapse collapse" id="cd-' + matches[i].id + '"><div class="panel-body">';
                 matchOutput += matches[i].id + ' ';
                 matchOutput += matches[i].result + ' ';
+                matchOutput += '</div></div>';
                 matchOutput += '</div>';
-                //<input class="hdate" type="hidden" value="<%= @match.time.to_json %>"><div class="date"></div><%= @match.id %> <%= @match.activityType %> <%= @match.result %></div>
             }
             $('.loading-spinner').hide();
             $('#matches').html(matchOutput);

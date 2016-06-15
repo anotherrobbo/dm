@@ -12,7 +12,7 @@
             $('#results').html('');
             $('.loading-spinner').show();
 			$.ajax({
-				url:'/search',
+				url:'search',
 				type:'GET',
                 data:{'un':$('#un').val()},
 				success:function(data){
@@ -33,15 +33,13 @@
 		},
         
         load: function(p) {
-			window.location = '/overview/' + p.system + '/' + p.name;
+			window.location = rootUrl + 'overview/' + p.system + '/' + p.name;
 		},
         
         show: function(ps) {
 			var results = '';
             for (i in ps) {
-                results += '<div>';
-                results += '<a href="/overview/' + ps[i].system + '/' + ps[i].name + '">' + ps[i].system + ' ' + ps[i].name + '</a>';
-                results += '<div>';
+                results += '<a href="' + rootUrl + 'overview/' + ps[i].system + '/' + ps[i].name + '" class="list-group-item"><img class="img-circle" alt="' + ps[i].system + '" title="' + ps[i].system + '" src="' + ps[i].systemIcon + '"/> ' + ps[i].name + '</a>';
             }
             $('#results').html(results);
 		}
