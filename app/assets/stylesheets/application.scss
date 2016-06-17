@@ -41,3 +41,9 @@
     transform: rotate(359deg);
   }
 }
+
+.loading-spinner {
+    @extend .glyphicon;
+    @extend .glyphicon-refresh;
+    @extend .glyphicon-spin;
+}

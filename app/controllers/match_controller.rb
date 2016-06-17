@@ -14,10 +14,10 @@ class MatchController < PlayerController
     def matchGames
         @activityIcons = Hash.new
         @activityNames = Hash.new
-        g1 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id]) do
+        g1 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id], expires_in: 15.minutes) do
             getGames(params[:systemCode], params[:id], getChars(params[:systemCode], params[:id]))
         end
-        g2 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id2]) do
+        g2 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id2], expires_in: 12.hours) do
             getGames(params[:systemCode], params[:id2], getChars(params[:systemCode], params[:id2]))
         end
         matches = getMatches(g1, g2)
@@ -43,11 +43,14 @@ class MatchController < PlayerController
                 end
                 data["Response"]["data"]["activities"].each do |act|
                     a = Activity.new
+                    #@@log.info(act)
                     a.id = act["activityDetails"]["instanceId"]
                     a.period = act["period"]
                     a.prefix = act["activityDetails"]["activityTypeHashOverride"] > 0 ? "activityType" : "activity"
                     a.activityHash = act["activityDetails"]["activityTypeHashOverride"] > 0 ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
                     a.result = act["values"]["standing"] != nil ? act["values"]["standing"]["basic"]["displayValue"][0] : nil
+                    a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
+                    a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
                     games[a.id] = a
                 end
                 #if data["Response"]["definitions"] != nil
@@ -83,6 +86,9 @@ class MatchController < PlayerController
                 a.activityIcon = getActivityIcon(a.prefix, a.activityHash)
                 a.activityName = getActivityName(a.prefix, a.activityHash)
                 a.result = g.result
+                a.team = g.team
+                a.kd = g.kd
+                a.sameTeam = g.team == nil || g.team == g2[key].team
                 matches.push(a)
             end
         end
