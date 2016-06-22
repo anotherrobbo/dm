@@ -1,12 +1,25 @@
 // Place all the styles related to the match controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+@import "slate";
 
-img.activityIcon {
+img.activityIcon, img.playerIcon {
     width: 46px;
     height: 46px;
 }
 
-.match .panel-heading {
+.match>.panel-heading {
     cursor: pointer;
+}
+
+.team {
+    @extend .panel;
+}
+
+.team-Alpha {
+    @extend .panel-danger;
+}
+
+.team-Bravo {
+    @extend .panel-info;
 }

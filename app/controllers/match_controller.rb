@@ -4,11 +4,6 @@ class MatchController < PlayerController
         system = params[:system]
         @model = getPlayer(system, params[:name])
         @model2 = getPlayer(system, params[:name2])
-        #g1 = getGames(@model.systemCode, @model.id, @model.chars)
-        #g2 = getGames(@model2.systemCode, @model2.id, @model2.chars)
-        #@matches = getMatches(g1, g2)
-        # Reverse sort by time
-        #@matches.sort! { |a, b| b.time <=> a.time }
     end
     
     def matchGames
@@ -26,6 +21,11 @@ class MatchController < PlayerController
         render json: matches
     end
     
+    def matchDetails
+        activityStats = getActivityStats(params[:id])
+        render json: activityStats
+    end
+    
     private def getGames(systemCode, id, chars)
         count = 250
         games = Hash.new
@@ -34,7 +34,7 @@ class MatchController < PlayerController
             #@@log.info(char)
             while 1
                 @@log.info("#{page} - #{char.id}")
-                defs = false#@activityIcons.empty?
+                defs = false
                 #@@log.info(defs)
                 data = jsonCall(@@bungieURL + "/Platform/Destiny/Stats/ActivityHistory/#{systemCode}/#{id}/#{char.id}/?definitions=#{defs}&mode=None&page=#{page}&count=#{count}")
                 # Break if we've reached a page with no data
@@ -42,36 +42,23 @@ class MatchController < PlayerController
                     break
                 end
                 data["Response"]["data"]["activities"].each do |act|
+                    useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
                     a = Activity.new
                     #@@log.info(act)
                     a.id = act["activityDetails"]["instanceId"]
                     a.period = act["period"]
-                    a.prefix = act["activityDetails"]["activityTypeHashOverride"] > 0 ? "activityType" : "activity"
-                    a.activityHash = act["activityDetails"]["activityTypeHashOverride"] > 0 ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
+                    a.prefix = useType ? "activityType" : "activity"
+                    a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
                     a.result = act["values"]["standing"] != nil ? act["values"]["standing"]["basic"]["displayValue"][0] : nil
                     a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
                     a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
                     games[a.id] = a
                 end
-                #if data["Response"]["definitions"] != nil
-                    #@@log.info("Loading Defs")
-                    #loadIcons(data["Response"]["definitions"]["activities"], "activity")
-                    #loadIcons(data["Response"]["definitions"]["activityTypes"], "activityType")
-                #end
                 page += 1
             end
         end
         return games
     end
-    
-    #private def loadIcons(activityTypes, prefix)
-    #    activityTypes.each do |at|
-    #        #@@log.info(at)
-    #        #@@log.info(at[1])
-    #        @activityIcons[at[1]["#{prefix}Hash"]] = @@bungieURL + at[1]["icon"]
-    #        @activityNames[at[1]["#{prefix}Hash"]] = at[1]["#{prefix}Name"]
-    #    end
-    #end
     
     private def getMatches(g1, g2)
         matches = Array.new
@@ -109,6 +96,55 @@ class MatchController < PlayerController
             data = jsonCall(@@bungieURL + "/Platform/Destiny/Manifest/#{prefix}/#{actHash}/")
             data["Response"]["data"][prefix]
         end
+    end
+    
+    private def getActivityStats(id)
+        activityStats = ActivityStats.new
+        data = jsonCall(@@bungieURL + "/Platform/Destiny/Stats/PostGameCarnageReport/#{id}/")
+        # Not all have teams
+        if data["Response"]["data"]["teams"] == nil || data["Response"]["data"]["teams"].empty?
+            activityStats.playerStats = getPlayerStats(data["Response"]["data"], nil);
+        else
+            activityStats.teamStats = getTeamStats(data["Response"]["data"]);
+        end
+        return activityStats
+    end
+    
+    private def getTeamStats(data)
+        teams = Array.new
+        data["teams"].each do |teamEntry|
+            t = TeamStats.new
+            #@@log.info(act)
+            t.id = teamEntry["teamId"]
+            t.name = teamEntry["teamName"]
+            t.result = teamEntry["standing"]["basic"]["displayValue"]
+            t.score = teamEntry["score"]["basic"]["displayValue"]
+            t.playerStats = getPlayerStats(data, t.id)
+            teams.push(t)
+        end
+        return teams
+    end
+    
+    private def getPlayerStats(data, teamId)
+        @@log.info("Get player stats #{teamId}")
+        players = Array.new
+        data["entries"].each do |playerEntry|
+            if teamId == nil || playerEntry["values"]["team"]["basic"]["value"] == teamId
+                p = PlayerStats.new
+                #@@log.info(act)
+                p.id = playerEntry["player"]["destinyUserInfo"]["membershipId"]
+                p.name = playerEntry["player"]["destinyUserInfo"]["displayName"]
+                p.playerIcon = @@bungieURL + playerEntry["player"]["destinyUserInfo"]["iconPath"]
+                p.score = playerEntry["score"]["basic"]["displayValue"]
+                p.k = playerEntry["values"]["kills"]["basic"]["displayValue"]
+                p.a = playerEntry["values"]["assists"]["basic"]["displayValue"]
+                p.d = playerEntry["values"]["deaths"]["basic"]["displayValue"]
+                p.kd = playerEntry["values"]["killsDeathsRatio"]["basic"]["displayValue"]
+                p.completed = playerEntry["values"]["completed"]["basic"]["value"] == 1
+                players.push(p)
+            end
+        end
+        return players
     end
 
 end

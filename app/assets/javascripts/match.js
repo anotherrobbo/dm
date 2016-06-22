@@ -73,9 +73,71 @@ function padNum(num) {
             // Check if we've already loaded the data
             if (!$('.panel-body .activityData', collapsable).length) {
                 $('.panel-body .loading-spinner', collapsable).show();
-                $('.panel-body', collapsable).append('<div class="activityData">DATA</div>');
-                $('.panel-body .loading-spinner', collapsable).hide();
+                $.ajax({
+                    url:rootUrl + 'match/details/' + $('.panel-body input[type="hidden"]', collapsable).val(),
+                    type:'GET',
+                    success:function(data, status, jqXHR){
+                        $('.panel-body', collapsable).append('<div class="activityData">' + methods.showActivity(data) + '</div>');
+                    },
+                    error:function(jqXHR, status, error){
+                        $('.panel-body', collapsable).append('<div class="activityData">ERROR</div>');
+                    },
+                    complete:function(jqXHR, status){
+                        $('.panel-body .loading-spinner', collapsable).hide();
+                    }
+                });
             }
+        },
+        
+        showActivity: function(data) {
+            if (data.teamStats && data.teamStats.length) {
+                return methods.showTeams(data.teamStats);
+            } else {
+                return methods.showPlayers(data.playerStats);
+            }
+        },
+        
+        showTeams: function(teamStats) {
+            output = '';
+            for (t in teamStats) {
+                teamStat = teamStats[t];
+                output += '<div class="team team-' + teamStat.name + '">';
+                output += '<div class="panel-heading">';
+                output += teamStat.name + ' ' + teamStat.score + ' ' + teamStat.result;
+                output += '</div>';
+                output += methods.showPlayers(teamStat.playerStats);
+                output += '</div>';
+            }
+            return output;
+        },
+        
+        showPlayers: function(playerStats) {
+            //output = '<div class="players">';
+            output = '<table class="table table-striped table-hover players">';
+            output += '<thead>';
+            output += '<tr>';
+            output += '<th>P</th>';
+            output += '<th>K</th>';
+            output += '<th>A</th>';
+            output += '<th>D</th>';
+            output += '<th>K/D</th>';
+            output += '<th>S</th>';
+            output += '</tr>';
+            output += '</thead>';
+            output += '<tbody>';
+            for (p in playerStats) {
+                playerStat = playerStats[p];
+                output += '<tr class="player">';
+                output += '<td><img class="activityIcon" src="' + playerStat.playerIcon + '" title="' + playerStat.name + '" /> ' + playerStat.name + '</td>';
+                output += '<td>' + playerStat.k + '</td>';
+                output += '<td>' + playerStat.a + '</td>';
+                output += '<td>' + playerStat.d + '</td>';
+                output += '<td>' + playerStat.kd + '</td>';
+                output += '<td>' + (playerStat.score ? playerStat.score : '') + '</td>';
+                output += '</tr>';
+            }
+            output += '</tbody></table>'
+            return output;
         }
 
 	};
