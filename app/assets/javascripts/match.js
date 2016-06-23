@@ -51,7 +51,7 @@ function padNum(num) {
                 } else {
                     matchOutput += ' <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ';
                 }
-                if (matches[i].result == 'V') {
+                if (matches[i].result == 1) {
                     matchOutput += ' <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ';
                 } else {
                     matchOutput += ' <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> ';
@@ -99,7 +99,8 @@ function padNum(num) {
         
         showTeams: function(teamStats) {
             output = '';
-            for (t in teamStats) {
+            //var t = 0;
+            for (var t in teamStats) {
                 teamStat = teamStats[t];
                 output += '<div class="team team-' + teamStat.name + '">';
                 output += '<div class="panel-heading">';
@@ -112,28 +113,38 @@ function padNum(num) {
         },
         
         showPlayers: function(playerStats) {
-            //output = '<div class="players">';
+            var hasScores = playerStats[0].score != "0"
             output = '<table class="table table-striped table-hover players">';
             output += '<thead>';
             output += '<tr>';
-            output += '<th>P</th>';
+            output += '<th></th>';
             output += '<th>K</th>';
             output += '<th>A</th>';
             output += '<th>D</th>';
             output += '<th>K/D</th>';
-            output += '<th>S</th>';
+            if (hasScores) {
+                output += '<th>S</th>';
+            }
             output += '</tr>';
             output += '</thead>';
             output += '<tbody>';
-            for (p in playerStats) {
+            //var p = 0;
+            for (var p in playerStats) {
                 playerStat = playerStats[p];
                 output += '<tr class="player">';
-                output += '<td><img class="activityIcon" src="' + playerStat.playerIcon + '" title="' + playerStat.name + '" /> ' + playerStat.name + '</td>';
+                output += '<td rowspan="3"><img class="activityIcon" src="' + playerStat.playerIcon + '" title="' + playerStat.name + '" /></td>';
                 output += '<td>' + playerStat.k + '</td>';
                 output += '<td>' + playerStat.a + '</td>';
                 output += '<td>' + playerStat.d + '</td>';
                 output += '<td>' + playerStat.kd + '</td>';
-                output += '<td>' + (playerStat.score ? playerStat.score : '') + '</td>';
+                if (hasScores) {
+                    output += '<td>' + playerStat.score + '</td>';
+                }
+                output += '</tr>';
+                output += '<tr class="invisRow"></tr>';
+                output += '<tr class="player">';
+                output += '<td colspan="3">' + playerStat.name + '</td>';
+                output += '<td colspan="2" style="font-size: smaller; text-align: right">' + playerStat.class + ' ' + playerStat.level + '</td>';
                 output += '</tr>';
             }
             output += '</tbody></table>'

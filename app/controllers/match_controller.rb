@@ -49,7 +49,7 @@ class MatchController < PlayerController
                     a.period = act["period"]
                     a.prefix = useType ? "activityType" : "activity"
                     a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
-                    a.result = act["values"]["standing"] != nil ? act["values"]["standing"]["basic"]["displayValue"][0] : nil
+                    a.result = act["values"]["standing"] != nil ? 1 - act["values"]["standing"]["basic"]["value"] : act["values"]["completed"]["basic"]["value"]
                     a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
                     a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
                     games[a.id] = a
@@ -135,6 +135,10 @@ class MatchController < PlayerController
                 p.id = playerEntry["player"]["destinyUserInfo"]["membershipId"]
                 p.name = playerEntry["player"]["destinyUserInfo"]["displayName"]
                 p.playerIcon = @@bungieURL + playerEntry["player"]["destinyUserInfo"]["iconPath"]
+                p.class = playerEntry["player"]["characterClass"]
+                p.level = playerEntry["player"]["characterLevel"]
+                p.light = playerEntry["player"]["lightLevel"]
+                p.scoreVal = playerEntry["score"]["basic"]["value"]
                 p.score = playerEntry["score"]["basic"]["displayValue"]
                 p.k = playerEntry["values"]["kills"]["basic"]["displayValue"]
                 p.a = playerEntry["values"]["assists"]["basic"]["displayValue"]
@@ -144,6 +148,8 @@ class MatchController < PlayerController
                 players.push(p)
             end
         end
+        # Sort by score then kills
+        players.sort! { |a, b| [b.scoreVal,b.k] <=> [a.scoreVal,a.k] }
         return players
     end
 
