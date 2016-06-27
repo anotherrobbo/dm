@@ -26,8 +26,8 @@ module Dm
     # Set root context for URLs
     config.relative_url_root = "/dm"
     
-    # Use an in memory cache
-    #config.cache_store = :memory_store
+    # Use a file store cache with compression
+    config.cache_store = :file_store, 'tmp/cache', {compress: true}
     
   end
 end

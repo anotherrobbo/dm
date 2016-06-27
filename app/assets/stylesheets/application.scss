@@ -47,3 +47,20 @@
     @extend .glyphicon-refresh;
     @extend .glyphicon-spin;
 }
+
+img.activityIcon, img.playerIcon {
+    width: 46px;
+    height: 46px;
+}
+
+.team {
+    @extend .panel;
+}
+
+.team-Alpha {
+    @extend .panel-danger;
+}
+
+.team-Bravo {
+    @extend .panel-info;
+}

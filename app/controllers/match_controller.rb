@@ -9,12 +9,8 @@ class MatchController < PlayerController
     def matchGames
         @activityIcons = Hash.new
         @activityNames = Hash.new
-        g1 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id], expires_in: 15.minutes) do
-            getGames(params[:systemCode], params[:id], getChars(params[:systemCode], params[:id]))
-        end
-        g2 = Rails.cache.fetch(params[:systemCode] + "|" + params[:id2], expires_in: 12.hours) do
-            getGames(params[:systemCode], params[:id2], getChars(params[:systemCode], params[:id2]))
-        end
+        g1 = getGamesForAccount(params[:systemCode], params[:id], getChars(params[:systemCode], params[:id]))
+        g2 = getGamesForAccount(params[:systemCode], params[:id2], getChars(params[:systemCode], params[:id2]))
         matches = getMatches(g1, g2)
         # Reverse sort by time
         matches.sort! { |a, b| b.time <=> a.time }
@@ -26,37 +22,58 @@ class MatchController < PlayerController
         render json: activityStats
     end
     
-    private def getGames(systemCode, id, chars)
+    private def getGamesForAccount(systemCode, id, chars)
         count = 250
         games = Hash.new
         chars.each do |char|
-            page = 0
-            #@@log.info(char)
-            while 1
-                @@log.info("#{page} - #{char.id}")
-                defs = false
-                #@@log.info(defs)
-                data = jsonCall(@@bungieURL + "/Platform/Destiny/Stats/ActivityHistory/#{systemCode}/#{id}/#{char.id}/?definitions=#{defs}&mode=None&page=#{page}&count=#{count}")
-                # Break if we've reached a page with no data
-                if data["Response"]["data"]["activities"] == nil
+            games.merge!(getGamesForChar(systemCode, id, char))
+        end
+        return games
+    end
+    
+    private def getGamesForChar(systemCode, id, char)
+        games = Rails.cache.fetch("#{systemCode}-#{id}-#{char.id}") do
+            Hash.new
+        end
+        # and now we assume that the ids are ALWAYS increasing... :S
+        max = 0
+        if games.length > 0
+            max = games.keys.sort{ |x,y| y <=> x }[0]
+            @@log.info("max = #{max}")
+        end
+        count = 250
+        page = 0
+        while 1
+            @@log.info("#{page} - #{char.id}")
+            #@@log.info(@@bungieURL + "/Platform/Destiny/Stats/ActivityHistory/#{systemCode}/#{id}/#{char.id}/?definitions=false&mode=None&page=#{page}&count=#{count}")
+            data = jsonCall(@@bungieURL + "/Platform/Destiny/Stats/ActivityHistory/#{systemCode}/#{id}/#{char.id}/?definitions=false&mode=None&page=#{page}&count=#{count}")
+            # Break if we've reached a page with no data
+            if data["Response"]["data"]["activities"] == nil
+                break
+            end
+            lastid = 0;
+            data["Response"]["data"]["activities"].each do |act|
+                lastid = act["activityDetails"]["instanceId"].to_i
+                if lastid <= max
                     break
                 end
-                data["Response"]["data"]["activities"].each do |act|
-                    useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
-                    a = Activity.new
-                    #@@log.info(act)
-                    a.id = act["activityDetails"]["instanceId"]
-                    a.period = act["period"]
-                    a.prefix = useType ? "activityType" : "activity"
-                    a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
-                    a.result = act["values"]["standing"] != nil ? 1 - act["values"]["standing"]["basic"]["value"] : act["values"]["completed"]["basic"]["value"]
-                    a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
-                    a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
-                    games[a.id] = a
-                end
-                page += 1
+                useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
+                a = Activity.new
+                a.id = lastid
+                a.period = act["period"]
+                a.prefix = useType ? "activityType" : "activity"
+                a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
+                a.result = act["values"]["standing"] != nil ? 1 - act["values"]["standing"]["basic"]["value"] : act["values"]["completed"]["basic"]["value"]
+                a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
+                a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
+                games[a.id] = a
             end
+            if lastid <= max
+                break
+            end
+            page += 1
         end
+        Rails.cache.write("#{systemCode}-#{id}-#{char.id}", games)
         return games
     end
     
@@ -91,7 +108,7 @@ class MatchController < PlayerController
     end
     
     private def getActivityDef(prefix, actHash)
-        return Rails.cache.fetch("#{prefix}|#{actHash}") do
+        return Rails.cache.fetch("#{prefix}-#{actHash}") do
             @@log.info("Loading #{prefix}/#{actHash}")
             data = jsonCall(@@bungieURL + "/Platform/Destiny/Manifest/#{prefix}/#{actHash}/")
             data["Response"]["data"][prefix]

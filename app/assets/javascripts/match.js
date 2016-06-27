@@ -114,7 +114,7 @@ function padNum(num) {
         
         showPlayers: function(playerStats) {
             var hasScores = playerStats[0].score != "0"
-            output = '<table class="table table-striped table-hover players">';
+            output = '<table class="table table-striped players">';
             output += '<thead>';
             output += '<tr>';
             output += '<th></th>';
