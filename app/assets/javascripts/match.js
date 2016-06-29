@@ -1,3 +1,5 @@
+var days = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
+
 function convertDateString(dateString) {
     var epochMillis = Date.parse(dateString);
     var localeDate = new Date(epochMillis);
@@ -5,7 +7,7 @@ function convertDateString(dateString) {
 }
 
 function formatDate(date) {
-    return date.getFullYear() + "/" + padNum(date.getMonth()) + "/" + padNum(date.getDate()) + " " + padNum(date.getHours()) + ":" + padNum(date.getMinutes());
+    return days[date.getDay()] + " " + date.getFullYear() + "/" + padNum(date.getMonth() + 1) + "/" + padNum(date.getDate()) + " " + padNum(date.getHours()) + ":" + padNum(date.getMinutes());
 }
 
 function padNum(num) {
