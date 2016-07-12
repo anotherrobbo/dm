@@ -24,7 +24,7 @@ module Dm
     config.active_record.raise_in_transactional_callbacks = true
     
     # Set root context for URLs
-    config.relative_url_root = "/dm"
+    config.relative_url_root = ENV['RAILS_CONTEXT']
     
     # Use a file store cache with compression
     config.cache_store = :file_store, 'tmp/cache', {compress: true}
