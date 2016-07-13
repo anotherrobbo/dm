@@ -1,13 +1,16 @@
 <div class="container">
+    <!--
     <div class="page-header" id="banner">
-        <h1>Matches</h1>
+        
     </div>
+    -->
+    <h4>Matches</h4>
     <input id="systemCode" type="hidden" value="<%= @model.systemCode %>">
     <input id="id" type="hidden" value="<%= @model.id %>">
     <input id="id2" type="hidden" value="<%= @model2.id %>">
     <div class="row">
         <div class="col-lg-6">
-            <h4><%= @model.name %> v <%= @model2.name %></h4>
+            <h4><%= @model.name %> matches with <%= @model2.name %></h4>
         </div>
     </div>
     <span class="loading-spinner"></span>

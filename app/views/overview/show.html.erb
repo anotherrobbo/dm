@@ -1,7 +1,10 @@
 <div class="container">
+    <!--
     <div class="page-header" id="banner">
-        <h1>SHOW</h1>
+        
     </div>
+    -->
+    <h4>Player Overview</h4>
     <div class="row">
         <div class="col-lg-6">
             <div class="panel panel-default">
@@ -18,11 +21,11 @@
             <div class="form-group">
                 <input type="hidden" id="system" value="<%= @model.system %>" />
                 <input type="hidden" id="name" value="<%= @model.name %>" />
-                <label class="control-label">Un2</label>
+                <label class="control-label">Find matches with:</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="un2" placeholder="un2" required>
+                    <input type="text" class="form-control" id="un2" placeholder="Username" required>
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit" id="submit">Button</button>
+                        <button class="btn btn-default" type="submit" id="submit">Search</button>
                     </span>
                 </div>
             </div>
