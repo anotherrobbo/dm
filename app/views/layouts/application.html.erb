@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Dm</title>
+	<title>Destiny Matches</title>
 	<%= stylesheet_link_tag    'application', media: 'all' %>
 	<%= stylesheet_link_tag     params[:controller] %>
 	<%= javascript_include_tag 'application' %>
@@ -12,6 +12,14 @@
 	<%= csrf_meta_tags %>
 </head>
 <body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Destiny Matches</a>
+        </div>
+    </div>
+</nav>
 
 <%= yield %>
 
