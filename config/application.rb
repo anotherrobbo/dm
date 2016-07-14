@@ -29,5 +29,10 @@ module Dm
     # Use a file store cache with compression
     config.cache_store = :file_store, ENV['RAILS_CACHE_DIR'] || 'tmp/cache', {compress: true}
     
+    # Logging
+    config.logger = Logger.new(STDOUT)
+    config.logger.level = Logger.const_get(ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'INFO')
+    config.log_level    = (ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].downcase : 'info').to_sym
+    
   end
 end
