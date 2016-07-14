@@ -17,6 +17,10 @@
 @import "bootstrap";
 @import "slate";
 
+body {
+    padding-top: 55px;
+}
+
 .glyphicon-spin {
   -webkit-animation: spin 1000ms infinite linear;
   animation: spin 1000ms infinite linear;

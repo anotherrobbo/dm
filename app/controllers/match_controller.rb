@@ -7,8 +7,7 @@ class MatchController < PlayerController
     end
     
     def matchGames
-        @activityIcons = Hash.new
-        @activityNames = Hash.new
+        @@log.info("Cache location: " + Rails.cache.cache_path)
         g1 = getGamesForAccount(params[:systemCode], params[:id], getChars(params[:systemCode], params[:id]))
         g2 = getGamesForAccount(params[:systemCode], params[:id2], getChars(params[:systemCode], params[:id2]))
         matches = getMatches(g1, g2)
