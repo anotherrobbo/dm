@@ -5,9 +5,9 @@ working_directory app_dir
 
 
 # Set unicorn options
-worker_processes 2
+worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
 preload_app true
-timeout 300
+timeout 10
 
 # Set up socket location
 #listen "#{shared_dir}/sockets/unicorn.sock", :backlog => 64

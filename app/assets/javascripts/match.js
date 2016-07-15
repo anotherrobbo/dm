@@ -32,9 +32,32 @@ function padNum(num) {
             $.ajax({
 				url:rootUrl + 'match/games/' + $("#systemCode").val() + '/' + $("#id").val() + '/' + $("#id2").val(),
 				type:'GET',
-                //data:{'un':$('#un').val()},
 				success:function(data){
-					methods.show(data);
+					methods.poll(data);
+				},
+				error:function(jqXHR){
+				    $('#matchCount').html('UNAVAILABLE');
+				}
+			});
+        },
+        
+        poll: function(process) {
+            $.ajax({
+				url:rootUrl + 'match/poll/' + process.id,
+				type:'GET',
+				success:function(data){
+                    if (data.result) {
+                        methods.show(data.result);
+                    } else {
+                        // Update progress bar
+                        var percent = Math.max(5, (data.progress / data.total) * 100);
+                        var dots = $('.progress-value').html().split('.').length - 1;
+                        $('.progress-bar').attr('aria-valuenow', Math.round(percent));
+                        $('.progress-bar').css('width', percent + '%');
+                        $('.progress-value').html('Loading' + ('.'.repeat((dots + 1) % 4)));
+                        // Schedule another poll in 2 seconds
+                        setTimeout(function() { methods.poll(process) }, 2000);
+                    }
 				},
 				error:function(jqXHR){
 				    $('#matchCount').html('UNAVAILABLE');
@@ -66,7 +89,7 @@ function padNum(num) {
                 matchOutput += '</div></div>';
                 matchOutput += '</div>';
             }
-            $('.loading-spinner').hide();
+            $('.progress').hide();
             $('#matches').html(matchOutput);
             $('#matchCount').html(matches.length + ' matches found');
 		},

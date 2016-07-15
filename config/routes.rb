@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   get 'overview/:system/:name' => 'overview#show'
   get 'match/:system/:name/:name2' => 'match#matchPlayers'
   get 'match/games/:systemCode/:id/:id2' => 'match#matchGames'
-  get 'match/details/:id' => 'match#matchDetails'
+  get 'match/poll/:id' => 'match#pollProcess'
+  get 'match/details/:id' => 'activity#activityDetails'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

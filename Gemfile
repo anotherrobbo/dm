@@ -4,7 +4,9 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.6'
 # Use PostgreSQL as the database for Active Record
- gem 'pg'
+gem 'pg'
+# ADDED Suckerpunch for background jobs
+gem 'sucker_punch', '~> 2.0'
 # ADDED Bootstrap
 gem 'bootstrap-sass', '~> 3.3.6'
 # Use SCSS for stylesheets

@@ -4,6 +4,8 @@ class PlayerStats
     attr_accessor :kd
     attr_accessor :d
     attr_accessor :a
+    # Need a numeric value for sorting
+    attr_accessor :kVal
     attr_accessor :k
     # Need a numeric value for sorting
     attr_accessor :scoreVal
