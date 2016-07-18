@@ -83,8 +83,8 @@ class MatchJob < PlayerController
                 a.time = DateTime.parse(g.period)
                 a.prefix = g.prefix
                 a.activityHash = g.activityHash
-                a.activityIcon = getActivityIcon(a.prefix, a.activityHash)
-                a.activityName = getActivityName(a.prefix, a.activityHash)
+                a.activityIcon = @@bungieURL + getDef(a.prefix, a.activityHash)["icon"]
+                a.activityName = getDef(a.prefix, a.activityHash)["#{a.prefix}Name"]
                 a.result = g.result
                 a.team = g.team
                 a.kd = g.kd
@@ -94,20 +94,5 @@ class MatchJob < PlayerController
         end
         return matches
     end
-    
-    private def getActivityIcon(prefix, actHash)
-        return @@bungieURL + getActivityDef(prefix, actHash)["icon"]
-    end
-    
-    private def getActivityName(prefix, actHash)
-        return getActivityDef(prefix, actHash)["#{prefix}Name"]
-    end
-    
-    private def getActivityDef(prefix, actHash)
-        return Rails.cache.fetch("#{prefix}-#{actHash}") do
-            @@log.info("Loading #{prefix}/#{actHash}")
-            data = jsonCall(@@bungieURL + "/Platform/Destiny/Manifest/#{prefix}/#{actHash}/")
-            data["Response"]["data"][prefix]
-        end
-    end
+
 end

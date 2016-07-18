@@ -6,7 +6,13 @@ class PlayerController < ApplicationController
         p.systemCode = getSystemCode(system)
         p.name = name
         p.id = getId(p.systemCode, p.name)
-        p.chars = getChars(p.systemCode, p.id)
+        
+        summary = getSummaryData(p.systemCode, p.id)
+        
+        p.clan = summary["clanName"]
+        p.clanTag = summary["clanTag"]
+        p.grimoire = summary["grimoireScore"]
+        p.chars = getChars(summary)
         return p
     end
     
@@ -26,21 +32,46 @@ class PlayerController < ApplicationController
         return (data["Response"].empty?) ? nil : data["Response"][0]["membershipId"]
     end
     
-    protected def getChars(systemCode, id)
+    protected def getSummaryData(systemCode, id)
         data = jsonCall(@@bungieURL + "/Platform/Destiny/#{systemCode}/Account/#{id}/Summary/")
         #@@log.info(data)
-        chars = Array.new
+        summary = nil
         if noErrors(data)
-            data["Response"]["data"]["characters"].each { |char| chars.push(createChar(char)) }
+            summary = data["Response"]["data"]
         end
+        return summary
+    end
+    
+    protected def getChars(summary)
+        chars = Array.new
+        summary["characters"].each { |char| chars.push(createChar(char)) }
         return chars
     end
     
     private def createChar(theChar)
         c = Char.new
         c.id = theChar["characterBase"]["characterId"]
-        c.classType = theChar["characterBase"]["classType"]
+        c.class = getDef2("class", "classDefinition", theChar["characterBase"]["classHash"])["className"]
+        c.race = getDef("race", theChar["characterBase"]["raceHash"])["raceName"]
+        c.gender = getDef("gender", theChar["characterBase"]["genderHash"])["genderName"]
+        c.light = theChar["characterBase"]["powerLevel"]
+        c.level = theChar["levelProgression"]["level"]
+        c.emblem = @@bungieURL + theChar["emblemPath"]
+        c.bg = @@bungieURL + theChar["backgroundPath"]
         return c
+    end
+    
+    protected def getDef(type, hash)
+        return getDef2(type, type, hash)
+    end
+    
+    protected def getDef2(type, typeDef, hash)
+        return Rails.cache.fetch("#{type}-#{hash}") do
+            @@log.info("Loading #{type}/#{hash}")
+            data = jsonCall(@@bungieURL + "/Platform/Destiny/Manifest/#{type}/#{hash}/")
+            ##@@log.info(data["Response"]["data"])
+            data["Response"]["data"][typeDef]
+        end
     end
 
 end

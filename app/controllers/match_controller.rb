@@ -8,8 +8,8 @@ class MatchController < PlayerController
     
     def matchGames
         # @@log.info("Cache location: " + Rails.cache.cache_path)
-        c1 = getChars(params[:systemCode], params[:id])
-        c2 = getChars(params[:systemCode], params[:id2])
+        c1 = getChars(getSummaryData(params[:systemCode], params[:id]))
+        c2 = getChars(getSummaryData(params[:systemCode], params[:id2]))
         # TODO shortcut if both ids are the same
         proc = LoadProcess.new
         proc.id = SecureRandom.uuid

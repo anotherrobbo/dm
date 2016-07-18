@@ -69,6 +69,7 @@ function padNum(num) {
             var matchOutput = '';
             for (i in matches) {
                 matchOutput += '<div class="panel panel-default match">';
+                matchOutput += '<a class="match-link" href="' + rootUrl + 'match/single/' + matches[i].id + '" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>';
                 matchOutput += '<div class="panel-heading" data-toggle="collapse" data-target="#cd-' + matches[i].id + '"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" /> ';
                 matchOutput += convertDateString(matches[i].time);
                 if (matches[i].sameTeam) {

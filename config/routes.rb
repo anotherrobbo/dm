@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get 'match/games/:systemCode/:id/:id2' => 'match#matchGames'
   get 'match/poll/:id' => 'match#pollProcess'
   get 'match/details/:id' => 'activity#activityDetails'
+  get 'match/single/:id' => 'activity#singleActivity'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

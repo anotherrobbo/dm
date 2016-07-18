@@ -1,3 +1,24 @@
 // Place all the styles related to the overview controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.char-panel {
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #000000;
+}
+
+.char-panel div {
+    padding: 2px;
+}
+
+.char-panel .levels {
+    color: yellow;
+}
+
+.char-emblem {
+    height: 50px;
+    float: left;
+    margin-right: 10px;
+}

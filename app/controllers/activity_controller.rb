@@ -5,16 +5,28 @@ class ActivityController < PlayerController
         render json: activityStats
     end
     
+    def singleActivity
+        @model = params[:id]
+    end
+    
     private def getActivityStats(id)
-        activityStats = ActivityStats.new
+        a = ActivityStats.new
         data = jsonCall(@@bungieURL + "/Platform/Destiny/Stats/PostGameCarnageReport/#{id}/")
         # Not all have teams
         if data["Response"]["data"]["teams"] == nil || data["Response"]["data"]["teams"].empty?
-            activityStats.playerStats = getPlayerStats(data["Response"]["data"], nil);
+            a.playerStats = getPlayerStats(data["Response"]["data"], nil);
         else
-            activityStats.teamStats = getTeamStats(data["Response"]["data"]);
+            a.teamStats = getTeamStats(data["Response"]["data"]);
         end
-        return activityStats
+        act = data["Response"]["data"]
+        a.id = id
+        a.time = DateTime.parse(act["period"])
+        useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
+        a.prefix = useType ? "activityType" : "activity"
+        a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
+        a.activityIcon = @@bungieURL + getDef(a.prefix, a.activityHash)["icon"]
+        a.activityName = getDef(a.prefix, a.activityHash)["#{a.prefix}Name"]
+        return a
     end
     
     private def getTeamStats(data)

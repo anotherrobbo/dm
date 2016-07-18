@@ -8,10 +8,16 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="panel panel-default">
-                <div class="panel-heading"><%= @model.name %></div>
-                <div class="panel-body"><%= @model.system %></div>
-                <div class="panel-body"><%= @model.systemCode %></div>
-                <div class="panel-body"><%= @model.id %></div>
+                <div class="panel-heading"><%= @model.name %> - <%= @model.clan %> [<%= @model.clanTag %>] - (<%= @model.grimoire %>)</div>
+                <% @model.chars.each do |char| %>
+                    <div class="panel-body char-panel" style="background-image:url(<%= char.bg %>)">
+                        <img class="char-emblem" src="<%= char.emblem %>">
+                        <div>
+                            <div><%= char.class %> / <%= char.race %> / <%= char.gender %></div>
+                            <div class="levels"><%= char.level %> - <%= char.light %></div>
+                        </div>
+                    </div>
+                <% end %>
             </div>
         </div>
     </div>
