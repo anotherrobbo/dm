@@ -71,7 +71,7 @@ function padNum(num) {
                 matchOutput += '<div class="panel panel-default match">';
                 matchOutput += '<a class="match-link" href="' + rootUrl + 'match/single/' + matches[i].id + '" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>';
                 matchOutput += '<div class="panel-heading" data-toggle="collapse" data-target="#cd-' + matches[i].id + '"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" /> ';
-                matchOutput += convertDateString(matches[i].time);
+                matchOutput += convertDateString(matches[i].period);
                 if (matches[i].sameTeam) {
                     matchOutput += ' <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ';
                 } else {

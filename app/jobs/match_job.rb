@@ -6,8 +6,8 @@ class MatchJob < PlayerController
         g1 = getGamesForAccount(procId, systemCode, id1, c1)
         g2 = getGamesForAccount(procId, systemCode, id2, c2)
         matches = getMatches(g1, g2)
-        # Reverse sort by time
-        matches.sort! { |a, b| b.time <=> a.time }
+        # Reverse sort by period
+        matches.sort! { |a, b| b.period <=> a.period }
         
         proc = Rails.cache.fetch(procId)
         proc.result = matches
@@ -16,9 +16,19 @@ class MatchJob < PlayerController
     
     private def getGamesForAccount(procId, systemCode, id, chars)
         count = 250
-        games = Hash.new
+        games = Array.new
         chars.each do |char|
-            games.merge!(getGamesForChar(systemCode, id, char))
+            charActivities = CharActivity.find_by_id(char.id)
+            if charActivities != nil
+                # Check if this is recent enough not to bother with searching again
+            else
+                charActivities = CharActivity.new
+                charActivities.id = char.id
+                charActivities.activities = Array.new
+            end
+            charActivities.activities = getGamesForChar(systemCode, id, charActivities)
+            charActivities.save!
+            games.concat(charActivities.activities)
             # TODO sync this if we're doing it on multiple threads
             proc = Rails.cache.fetch(procId)
             proc.progress = proc.progress + 1
@@ -28,13 +38,11 @@ class MatchJob < PlayerController
     end
     
     private def getGamesForChar(systemCode, id, char)
-        games = Rails.cache.fetch("#{systemCode}-#{id}-#{char.id}") do
-            Hash.new
-        end
         # and now we assume that the ids are ALWAYS increasing... :S
         max = 0
+        games = char.activities
         if games.length > 0
-            max = games.keys.sort{ |x,y| y <=> x }[0]
+            max = games.sort{ |x,y| y.id <=> x.id }[0].id
             @@log.info("max = #{max}")
         end
         count = 250
@@ -56,31 +64,31 @@ class MatchJob < PlayerController
                 useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
                 a = Activity.new
                 a.id = lastid
-                a.period = act["period"]
+                a.period = DateTime.parse(act["period"])
                 a.prefix = useType ? "activityType" : "activity"
                 a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
                 a.result = act["values"]["standing"] != nil ? 1 - act["values"]["standing"]["basic"]["value"] : act["values"]["completed"]["basic"]["value"]
                 a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
                 a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
-                games[a.id] = a
+                games.push(a)
             end
             if lastid <= max
                 break
             end
             page += 1
         end
-        Rails.cache.write("#{systemCode}-#{id}-#{char.id}", games)
         return games
     end
     
     private def getMatches(g1, g2)
+        h1 = g1.map { |x| [x.id, x] }.to_h
+        h2 = g2.map { |x| [x.id, x] }.to_h
         matches = Array.new
-        g1.each do |key, g|
-            if g2.has_key?(key) 
-                #@@log.info(g["values"]["standing"])
+        h1.each do |key, g|
+            if h2.has_key?(key) 
                 a = ActivityDetail.new
                 a.id = g.id
-                a.time = DateTime.parse(g.period)
+                a.period = g.period
                 a.prefix = g.prefix
                 a.activityHash = g.activityHash
                 a.activityIcon = @@bungieURL + getDef(a.prefix, a.activityHash)["icon"]
@@ -88,7 +96,7 @@ class MatchJob < PlayerController
                 a.result = g.result
                 a.team = g.team
                 a.kd = g.kd
-                a.sameTeam = g.team == nil || g.team == g2[key].team
+                a.sameTeam = g.team == nil || g.team == h2[key].team
                 matches.push(a)
             end
         end
