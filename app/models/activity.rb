@@ -1,4 +1,4 @@
-class Activity < ActiveRecord::Base
+class Activity < ApplicationRecord
     self.primary_key = "id"
     belongs_to :charActivity
 
@@ -12,12 +12,13 @@ class Activity < ActiveRecord::Base
     # Extra transient properties
     attr_accessor :activityIcon
     attr_accessor :activityName
+    attr_accessor :sameTeam
     
     def as_json(options = { })
         # just in case someone says as_json(nil) and bypasses
         # our default...
         super((options || { }).merge({
-            :methods => [:activityIcon, :activityName]
+            :methods => [:activityIcon, :activityName, :sameTeam]
         }))
     end
 

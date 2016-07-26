@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -24,17 +23,15 @@ ActiveRecord::Schema.define(version: 20160722044100) do
     t.string   "char_activity_id",            null: false
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.index ["char_activity_id"], name: "index_activities_on_char_activity_id"
+    t.index ["id"], name: "index_activities_on_id"
   end
-
-  add_index "activities", ["char_activity_id"], name: "index_activities_on_char_activity_id"
-  add_index "activities", ["id"], name: "index_activities_on_id"
 
   create_table "char_activities", id: false, force: :cascade do |t|
     t.integer  "id",         limit: 20, null: false
     t.datetime "created_at",            null: false
     t.datetime "updated_at",            null: false
+    t.index ["id"], name: "index_char_activities_on_id"
   end
-
-  add_index "char_activities", ["id"], name: "index_char_activities_on_id"
 
 end

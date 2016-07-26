@@ -4,8 +4,12 @@ class MatchJob < PlayerController
 
     def perform(procId, systemCode, id1, id2, c1, c2)
         g1 = getGamesForAccount(procId, systemCode, id1, c1)
-        g2 = getGamesForAccount(procId, systemCode, id2, c2)
-        matches = getMatches(g1, g2)
+        if id1 == id2
+            matches = getMatches(g1, g1)
+        else
+            g2 = getGamesForAccount(procId, systemCode, id2, c2)
+            matches = getMatches(g1, g2)
+        end
         # Reverse sort by period
         matches.sort! { |a, b| b.period <=> a.period }
         
@@ -20,13 +24,15 @@ class MatchJob < PlayerController
         chars.each do |char|
             charActivities = CharActivity.find_by_id(char.id)
             if charActivities != nil
-                # Check if this is recent enough not to bother with searching again
+                # TODO Check if this is recent enough not to bother with searching again
+                # lower count as we already have records and lower counts are quicker
+                count = 10
             else
                 charActivities = CharActivity.new
                 charActivities.id = char.id
                 charActivities.activities = Array.new
             end
-            charActivities.activities = getGamesForChar(systemCode, id, charActivities)
+            charActivities.activities = getGamesForChar(systemCode, id, charActivities, count)
             charActivities.save!
             games.concat(charActivities.activities)
             # TODO sync this if we're doing it on multiple threads
@@ -37,7 +43,7 @@ class MatchJob < PlayerController
         return games
     end
     
-    private def getGamesForChar(systemCode, id, char)
+    private def getGamesForChar(systemCode, id, char, count)
         # and now we assume that the ids are ALWAYS increasing... :S
         max = 0
         games = char.activities
@@ -45,7 +51,6 @@ class MatchJob < PlayerController
             max = games.sort{ |x,y| y.id <=> x.id }[0].id
             @@log.info("max = #{max}")
         end
-        count = 250
         page = 0
         while 1
             @@log.info("#{page} - #{char.id}")
