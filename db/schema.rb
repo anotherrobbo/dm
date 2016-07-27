@@ -24,14 +24,14 @@ ActiveRecord::Schema.define(version: 20160722044100) do
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
     t.index ["char_activity_id"], name: "index_activities_on_char_activity_id"
-    t.index ["id"], name: "index_activities_on_id"
+    t.index ["id"], name: "index_activities_on_id", unique: true
   end
 
   create_table "char_activities", id: false, force: :cascade do |t|
     t.integer  "id",         limit: 8, null: false
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
-    t.index ["id"], name: "index_char_activities_on_id"
+    t.index ["id"], name: "index_char_activities_on_id", unique: true
   end
 
 end

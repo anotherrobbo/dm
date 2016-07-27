@@ -1,7 +1,7 @@
 class CreateActivities < ActiveRecord::Migration[5.0]
   def change
     create_table :activities, id: false do |t|
-      t.integer :id, null: false, index: true, limit: 8
+      t.integer :id, null: false, index: { unique: true }, limit: 8
       t.datetime :period
       t.string :prefix
       t.string :activityHash
