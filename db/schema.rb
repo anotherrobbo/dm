@@ -13,24 +13,24 @@
 ActiveRecord::Schema.define(version: 20160722044100) do
 
   create_table "activities", id: false, force: :cascade do |t|
-    t.integer  "id",               limit: 20, null: false
+    t.integer  "id",               limit: 8, null: false
     t.datetime "period"
     t.string   "prefix"
     t.string   "activityHash"
     t.integer  "result"
     t.string   "team"
     t.string   "kd"
-    t.string   "char_activity_id",            null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.integer  "char_activity_id", limit: 8, null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.index ["char_activity_id"], name: "index_activities_on_char_activity_id"
     t.index ["id"], name: "index_activities_on_id"
   end
 
   create_table "char_activities", id: false, force: :cascade do |t|
-    t.integer  "id",         limit: 20, null: false
-    t.datetime "created_at",            null: false
-    t.datetime "updated_at",            null: false
+    t.integer  "id",         limit: 8, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
     t.index ["id"], name: "index_char_activities_on_id"
   end
 
