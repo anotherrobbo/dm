@@ -1,3 +1,6 @@
+require 'char_activity'
+require 'activity'
+
 class MatchJob < PlayerController
     include SuckerPunch::Job
     workers 4
@@ -20,7 +23,7 @@ class MatchJob < PlayerController
     
     private def getGamesForAccount(procId, systemCode, id, chars)
         count = 250
-        games = Array.new
+        games = Hash.new
         chars.each do |char|
             charActivities = CharActivity.find_by_id(char.id)
             refresh = true
@@ -30,7 +33,7 @@ class MatchJob < PlayerController
             else
                 charActivities = CharActivity.new
                 charActivities.id = char.id
-                charActivities.activities = Array.new
+                charActivities.activities = Hash.new
             end
             
             # check if we already found records in the last 10 minutes
@@ -45,7 +48,7 @@ class MatchJob < PlayerController
                     charActivities.touch
                 end
             end
-            games.concat(charActivities.activities)
+            games.merge!(charActivities.activities)
             # TODO sync this if we're doing it on multiple threads
             proc = Rails.cache.fetch(procId)
             proc.progress = proc.progress + 1
@@ -59,7 +62,7 @@ class MatchJob < PlayerController
         max = 0
         games = char.activities
         if games.length > 0
-            max = games.sort{ |x,y| y.id <=> x.id }[0].id
+            max = games.keys.sort{ |x,y| y <=> x }[0]
             @@log.info("max = #{max}")
         end
         page = 0
@@ -86,7 +89,7 @@ class MatchJob < PlayerController
                 a.result = act["values"]["standing"] != nil ? 1 - act["values"]["standing"]["basic"]["value"] : act["values"]["completed"]["basic"]["value"]
                 a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
                 a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
-                games.push(a)
+                games[a.id] = a
             end
             if lastid <= max
                 break
@@ -97,8 +100,8 @@ class MatchJob < PlayerController
     end
     
     private def getMatches(g1, g2)
-        h1 = g1.map { |x| [x.id, x] }.to_h
-        h2 = g2.map { |x| [x.id, x] }.to_h
+        h1 = g1
+        h2 = g2
         matches = Array.new
         h1.each do |key, g|
             if h2.has_key?(key) 

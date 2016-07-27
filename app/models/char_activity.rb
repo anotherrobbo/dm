@@ -1,4 +1,4 @@
 class CharActivity < ApplicationRecord
     self.primary_key = "id"
-    has_many :activities
+    serialize :activities, Hash
 end
