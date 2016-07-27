@@ -2,7 +2,7 @@ class Activity < ApplicationRecord
     self.primary_key = "id"
     belongs_to :charActivity
 
-    # Persisted properties don't need accessors defined?
+    # Persisted properties don't need accessors defined
     #attr_accessor :period
     #attr_accessor :prefix
     #attr_accessor :activityHash

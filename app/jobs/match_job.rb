@@ -23,17 +23,28 @@ class MatchJob < PlayerController
         games = Array.new
         chars.each do |char|
             charActivities = CharActivity.find_by_id(char.id)
+            refresh = true
             if charActivities != nil
-                # TODO Check if this is recent enough not to bother with searching again
                 # lower count as we already have records and lower counts are quicker
-                count = 10
+                count = 50
             else
                 charActivities = CharActivity.new
                 charActivities.id = char.id
                 charActivities.activities = Array.new
             end
-            charActivities.activities = getGamesForChar(systemCode, id, charActivities, count)
-            charActivities.save!
+            
+            # check if we already found records in the last 10 minutes
+            if charActivities.updated_at != nil && charActivities.updated_at > 10.minutes.ago
+                @@log.info("Last updated less than 10 minutes ago so skipping load - #{charActivities.updated_at}")
+            else
+                charActivities.activities = getGamesForChar(systemCode, id, charActivities, count)
+                @@log.info(charActivities.changed?)
+                if charActivities.new_record?
+                    charActivities.save!
+                else
+                    charActivities.touch
+                end
+            end
             games.concat(charActivities.activities)
             # TODO sync this if we're doing it on multiple threads
             proc = Rails.cache.fetch(procId)
