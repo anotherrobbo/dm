@@ -20,7 +20,7 @@ class ActivityController < PlayerController
         end
         act = data["Response"]["data"]
         a.id = id
-        a.time = DateTime.parse(act["period"])
+        a.period = DateTime.parse(act["period"])
         useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
         a.prefix = useType ? "activityType" : "activity"
         a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
