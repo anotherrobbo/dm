@@ -91,7 +91,7 @@ function padNum(num) {
             for (var p in playerStats) {
                 playerStat = playerStats[p];
                 output += '<tr class="player">';
-                output += '<td rowspan="3"><img class="activityIcon" src="' + playerStat.playerIcon + '" title="' + playerStat.name + '" /></td>';
+                output += '<td rowspan="3" class="iconCell"><img class="activityIcon" src="' + playerStat.playerIcon + '" title="' + playerStat.name + '" /></td>';
                 output += '<td>' + playerStat.k + '</td>';
                 output += '<td>' + playerStat.a + '</td>';
                 output += '<td>' + playerStat.d + '</td>';

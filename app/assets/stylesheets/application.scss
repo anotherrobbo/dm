@@ -17,8 +17,30 @@
 @import "bootstrap";
 @import "slate";
 
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 body {
-    padding-top: 55px;
+    padding-top: 45px;
+    margin-bottom: 40px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+    background-color: #3c424a;
+}
+
+.footer .container {
+    padding-top: 10px;
+}
+
+.text-muted a {
+    color: #bbbbbb;
 }
 
 .glyphicon-spin {

@@ -1,3 +1,19 @@
 // Place all the styles related to the match controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.match .panel-heading {
+    padding: 5px;
+}
+
+.match>.panel-body {
+    padding: 0px;
+}
+
+.match th, .match td {
+    padding: 5px !important;
+}
+
+.iconCell {
+    width: 56px;
+}

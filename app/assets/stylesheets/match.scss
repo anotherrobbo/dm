@@ -6,6 +6,26 @@
     cursor: pointer;
 }
 
+.match .panel-heading {
+    padding: 5px;
+}
+
+.match>.panel-collapse>.panel-body {
+    padding: 0px;
+}
+
+.match th, .match td {
+    padding: 5px !important;
+}
+
+.iconCell {
+    width: 56px;
+}
+
+.match .loading-spinner {
+    margin: 10px;
+}
+
 .match-link {
     float: right;
     position: relative;
