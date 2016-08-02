@@ -42,7 +42,7 @@ function padNum(num) {
             var matchOutput = '';
             matchOutput += '<div class="panel panel-default match">';
             matchOutput += '<div class="panel-heading"><img class="activityIcon" src="' + data.activityIcon + '" title="' + data.activityName + '" /> ';
-            matchOutput += convertDateString(data.time);
+            matchOutput += convertDateString(data.period);
             matchOutput += '</div>';
             matchOutput += '<div class="panel-body" id="match-detail">';
             matchOutput += '</div>';
