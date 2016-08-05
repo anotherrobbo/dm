@@ -8,9 +8,11 @@ class MatchController < PlayerController
     
     def matchGames
         # @@log.info("Cache location: " + Rails.cache.cache_path)
-        c1 = getChars(getSummaryData(params[:systemCode], params[:id]))
-        c2 = getChars(getSummaryData(params[:systemCode], params[:id2]))
-        # TODO shortcut if both ids are the same
+        system = params[:system]
+        pr1 = getPlayerRecord(system, params[:name])
+        pr2 = getPlayerRecord(system, params[:name2])
+        c1 = getChars(getSummaryData(pr1.systemCode, pr1.id))
+        c2 = getChars(getSummaryData(pr2.systemCode, pr2.id))
         proc = LoadProcess.new
         proc.id = SecureRandom.uuid
         proc.total = c1.length + c2.length
@@ -20,7 +22,9 @@ class MatchController < PlayerController
         # Kick off a new job to do the processing
         MatchJob.perform_async(proc.id, params[:systemCode], params[:id], params[:id2], c1, c2)
 
-        render json: proc
+        @name1 = pr1.name
+        @name2 = pr2.name
+        @model = proc
     end
     
     def pollProcess

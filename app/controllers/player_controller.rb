@@ -1,11 +1,27 @@
 class PlayerController < ApplicationController
     
-    protected def getPlayer(system, name)
-        p = Player.new
-        p.system = system
-        p.systemCode = getSystemCode(system)
-        p.name = name
-        p.id = getId(p.systemCode, p.name)
+    def getPlayerRecord(system, name)    
+        pr = PlayerRecord.find_by(system: system, name: name)
+        if pr == nil
+            pr = PlayerRecord.new
+            pr.system = system
+            pr.systemCode = getSystemCode(system)
+            pr.name = name
+            pr.id = getId(pr.systemCode, pr.name)
+            pr.save
+        end
+        
+        return pr
+    end
+    
+    protected def getPlayer(system, name)    
+        pr = getPlayerRecord(system, name)
+        
+        p = Player.new        
+        p.id = pr.id
+        p.system = pr.system
+        p.systemCode = pr.systemCode
+        p.name = pr.name
         
         summary = getSummaryData(p.systemCode, p.id)
         

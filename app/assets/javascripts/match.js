@@ -18,14 +18,10 @@ function padNum(num) {
 	var methods = {
 		// Initialise plugin.
 		init: function() {
-		    /*$('#submit').click(function() {
-		        methods.go();
-		    });
-            */
             $('#matches').on('shown.bs.collapse', function (e) {
                 methods.loadActivity(e.target);
             });
-            methods.loadMatches();
+            methods.loadMatches(@model);
 		},
         
         loadMatches: function() {

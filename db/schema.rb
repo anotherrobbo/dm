@@ -10,14 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160722043425) do
+ActiveRecord::Schema.define(version: 20160805052632) do
 
-  create_table "char_activities", id: false, force: :cascade do |t|
-    t.integer  "id",         limit: 8, null: false
+  create_table "activity_records", id: false, force: :cascade do |t|
+    t.integer  "id",               limit: 8, null: false
+    t.integer  "player_record_id", limit: 8, null: false
     t.text     "activities"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.index ["id"], name: "index_char_activities_on_id", unique: true
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.index ["id"], name: "index_activity_records_on_id", unique: true
+    t.index ["player_record_id"], name: "index_activity_records_on_player_record_id"
+  end
+
+  create_table "player_records", id: false, force: :cascade do |t|
+    t.integer  "id",            limit: 8,             null: false
+    t.integer  "systemCode",                          null: false
+    t.string   "name",                                null: false
+    t.string   "system",                              null: false
+    t.integer  "overviewCount", limit: 8, default: 0, null: false
+    t.integer  "matchesCount",  limit: 8, default: 0, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.index ["id"], name: "index_player_records_on_id", unique: true
   end
 
 end

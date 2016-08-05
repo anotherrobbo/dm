@@ -1,4 +1,5 @@
-require 'char_activity'
+require 'player_record'
+require 'activity_record'
 require 'activity'
 
 class MatchJob < PlayerController
