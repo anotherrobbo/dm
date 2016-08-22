@@ -1,13 +1,18 @@
 class PlayerController < ApplicationController
     
-    def getPlayerRecord(system, name)    
-        pr = PlayerRecord.find_by(system: system, name: name)
+    def getPlayerRecord(system, name)
+        @@log.info("params : #{system} #{name}")
+        pr = PlayerRecord.where("upper(system) = ? AND upper(name) = ?", system.upcase, name.upcase).first
+        @@log.info("pr : #{pr}")
         if pr == nil
             pr = PlayerRecord.new
             pr.system = system
             pr.systemCode = getSystemCode(system)
-            pr.name = name
-            pr.id = getId(pr.systemCode, pr.name)
+            
+            info = getInfo(pr.systemCode, name)
+            pr.name = info["displayName"]
+            pr.id = info["membershipId"]
+            
             pr.save
         end
         
@@ -42,10 +47,10 @@ class PlayerController < ApplicationController
         return 0
     end
     
-    protected def getId(systemCode, name)
+    protected def getInfo(systemCode, name)
         data = jsonCall(@@bungieURL + "/Platform/Destiny/SearchDestinyPlayer/#{systemCode}/#{name}/")
         #@@log.info(data["Response"].empty?)
-        return (data["Response"].empty?) ? nil : data["Response"][0]["membershipId"]
+        return (data["Response"].empty?) ? nil : data["Response"][0]
     end
     
     protected def getSummaryData(systemCode, id)
