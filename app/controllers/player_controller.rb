@@ -1,9 +1,7 @@
 class PlayerController < ApplicationController
     
     def getPlayerRecord(system, name)
-        @@log.info("params : #{system} #{name}")
         pr = PlayerRecord.where("upper(system) = ? AND upper(name) = ?", system.upcase, name.upcase).first
-        @@log.info("pr : #{pr}")
         if pr == nil
             pr = PlayerRecord.new
             pr.system = system
