@@ -20,11 +20,12 @@ class MatchController < PlayerController
         Rails.cache.write(proc.id, proc, expires_in: 5.minutes)
 
         # Kick off a new job to do the processing
-        MatchJob.perform_async(proc.id, params[:systemCode], params[:id], params[:id2], c1, c2)
+        MatchJob.perform_async(proc.id, pr1.systemCode, pr1, pr2, c1, c2)
 
         @name1 = pr1.name
         @name2 = pr2.name
         @model = proc
+        @@log.info("Returning: #{@model}")
     end
     
     def pollProcess

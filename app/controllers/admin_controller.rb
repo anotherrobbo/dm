@@ -10,6 +10,7 @@ class AdminController < ApplicationController
     
     def playerStats
         render json: PlayerRecord.order(overviewCount: :desc, matchesCount: :desc)
+        #render json: ActivityRecord.order(id: :desc)
     end
 
 end

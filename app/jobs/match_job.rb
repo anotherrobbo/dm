@@ -6,12 +6,12 @@ class MatchJob < PlayerController
     include SuckerPunch::Job
     workers 4
 
-    def perform(procId, systemCode, id1, id2, c1, c2)
-        g1 = getGamesForAccount(procId, systemCode, id1, c1)
-        if id1 == id2
+    def perform(procId, systemCode, pr1, pr2, c1, c2)
+        g1 = getGamesForAccount(procId, systemCode, pr1, c1)
+        if pr1.id == pr2.id
             matches = getMatches(g1, g1)
         else
-            g2 = getGamesForAccount(procId, systemCode, id2, c2)
+            g2 = getGamesForAccount(procId, systemCode, pr2, c2)
             matches = getMatches(g1, g2)
         end
         # Reverse sort by period
@@ -22,40 +22,51 @@ class MatchJob < PlayerController
         Rails.cache.write(procId, proc, expires_in: 5.minutes)
     end
     
-    private def getGamesForAccount(procId, systemCode, id, chars)
+    private def getGamesForAccount(procId, systemCode, pr, chars)
         count = 250
         games = Hash.new
         chars.each do |char|
-            charActivities = CharActivity.find_by_id(char.id)
+            activityRecord = findActivityRecord(pr, char.id)
             refresh = true
-            if charActivities != nil
+            if activityRecord != nil
                 # lower count as we already have records and lower counts are quicker
                 count = 50
             else
-                charActivities = CharActivity.new
-                charActivities.id = char.id
-                charActivities.activities = Hash.new
+                activityRecord = ActivityRecord.new
+                activityRecord.id = char.id
+                activityRecord.activities = Hash.new
             end
             
             # check if we already found records in the last 10 minutes
-            if charActivities.updated_at != nil && charActivities.updated_at > 10.minutes.ago
-                @@log.info("Last updated less than 10 minutes ago so skipping load - #{charActivities.updated_at}")
+            if activityRecord.updated_at != nil && activityRecord.updated_at > 10.minutes.ago
+                @@log.info("Last updated less than 10 minutes ago so skipping load - #{activityRecord.updated_at}")
             else
-                charActivities.activities = getGamesForChar(systemCode, id, charActivities, count)
-                @@log.info(charActivities.changed?)
-                if charActivities.new_record?
-                    charActivities.save!
+                activityRecord.activities = getGamesForChar(systemCode, pr.id, activityRecord, count)
+                #@@log.info(activityRecord.changed?)
+                if activityRecord.new_record? || activityRecord.changed?
+                    activityRecord.save!
                 else
-                    charActivities.touch
+                    activityRecord.touch
                 end
             end
-            games.merge!(charActivities.activities)
+            games.merge!(activityRecord.activities)
             # TODO sync this if we're doing it on multiple threads
             proc = Rails.cache.fetch(procId)
             proc.progress = proc.progress + 1
             Rails.cache.write(procId, proc, expires_in: 5.minutes)
         end
+        pr.increment(:matchesCount)
+        pr.save
         return games
+    end
+    
+    private def findActivityRecord(pr, cid)
+        pr.activityRecords.each do |ar|
+            if ar.id == cid
+                return ar
+            end
+        end
+        return nil
     end
     
     private def getGamesForChar(systemCode, id, char, count)

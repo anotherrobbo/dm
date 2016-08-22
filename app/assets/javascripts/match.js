@@ -21,7 +21,7 @@ function padNum(num) {
             $('#matches').on('shown.bs.collapse', function (e) {
                 methods.loadActivity(e.target);
             });
-            methods.loadMatches(@model);
+            methods.poll($('#processId').val());
 		},
         
         loadMatches: function() {
@@ -37,9 +37,9 @@ function padNum(num) {
 			});
         },
         
-        poll: function(process) {
+        poll: function(processId) {
             $.ajax({
-				url:rootUrl + 'match/poll/' + process.id,
+				url:rootUrl + 'match/poll/' + processId,
 				type:'GET',
 				success:function(data){
                     if (data.result) {
@@ -52,7 +52,7 @@ function padNum(num) {
                         $('.progress-bar').css('width', percent + '%');
                         $('.progress-value').html('Loading' + ('.'.repeat((dots + 1) % 4)));
                         // Schedule another poll in 2 seconds
-                        setTimeout(function() { methods.poll(process) }, 2000);
+                        setTimeout(function() { methods.poll(data.id) }, 2000);
                     }
 				},
 				error:function(jqXHR){

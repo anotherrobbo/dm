@@ -66,7 +66,7 @@ class PlayerController < ApplicationController
     
     private def createChar(theChar)
         c = Char.new
-        c.id = theChar["characterBase"]["characterId"]
+        c.id = theChar["characterBase"]["characterId"].to_i
         c.class = getDef2("class", "classDefinition", theChar["characterBase"]["classHash"])["className"]
         c.race = getDef("race", theChar["characterBase"]["raceHash"])["raceName"]
         c.gender = getDef("gender", theChar["characterBase"]["genderHash"])["genderName"]
