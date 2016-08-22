@@ -33,6 +33,7 @@ class MatchJob < PlayerController
                 count = 50
             else
                 activityRecord = ActivityRecord.new
+                activityRecord.player_record_id = pr.id
                 activityRecord.id = char.id
                 activityRecord.activities = Hash.new
             end
