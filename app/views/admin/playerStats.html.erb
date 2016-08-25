@@ -1,0 +1,30 @@
+<div class="container">
+    <h4>Admin - Player Stats</h4>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel-group">
+                <table class="table table-striped players">
+                    <thead><tr>
+                        <th>Name / Sys</th>
+                        <th class="text-right">O</th>
+                        <th class="text-right">M</th>
+                        <th class="text-right">Created</th>
+                        <th class="text-right">Updated</th>
+                    </tr></thead>
+                    <tbody>
+                    <% @model.each do |p_rec| %>
+                        <tr>
+                            <td><%= p_rec.name %><br/><%= p_rec.system %></td>
+                            <td class="text-right"><%= p_rec.overviewCount %></td>
+                            <td class="text-right"><%= p_rec.matchesCount %></td>
+                            <td class="text-right dateCell"><%= p_rec.created_at %></td>
+                            <td class="text-right dateCell"><%= p_rec.updated_at %></td>
+                        </tr>
+                    <% end %>
+                    </tbody>
+                </table>
+                <% @model %>
+            </div>
+        </div>
+    </div>
+</div>

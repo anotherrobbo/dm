@@ -1,4 +1,7 @@
 class AdminController < ApplicationController
+
+    def index
+    end
     
     def cacheStats
         if Rails.cache.respond_to?(:stats)
@@ -9,8 +12,7 @@ class AdminController < ApplicationController
     end
     
     def playerStats
-        render json: PlayerRecord.order(overviewCount: :desc, matchesCount: :desc)
-        #render json: ActivityRecord.order(id: :desc)
+        @model = PlayerRecord.order(overviewCount: :desc, matchesCount: :desc)
     end
 
 end
