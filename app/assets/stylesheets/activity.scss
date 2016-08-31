@@ -10,10 +10,12 @@
     padding: 0px;
 }
 
-.match th, .match td {
-    padding: 5px !important;
+table.players > thead > tr > th, table.players > tbody > tr > td {
+    padding: 0px 5px 0px 5px;
+    vertical-align: middle;
 }
 
-.iconCell {
+table.players > tbody > tr > td.iconCell {
+    padding: 2px 5px 2px 5px;
     width: 56px;
 }

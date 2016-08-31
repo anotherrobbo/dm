@@ -66,20 +66,27 @@ function padNum(num) {
             for (i in matches) {
                 matchOutput += '<div class="panel panel-default match">';
                 matchOutput += '<a class="match-link" href="' + rootUrl + 'match/single/' + matches[i].id + '" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>';
-                matchOutput += '<div class="panel-heading" data-toggle="collapse" data-target="#cd-' + matches[i].id + '"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" /> ';
-                matchOutput += convertDateString(matches[i].period);
+                matchOutput += '<div class="panel-heading" data-toggle="collapse" data-target="#cd-' + matches[i].id + '"><div class="tableDiv">'
+                matchOutput += '<div class="activityCell"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" /></div>';
+                matchOutput += '<div class="dateCell">' + convertDateString(matches[i].period) + '</div>';
+                matchOutput += '<div class="fillCell">';
                 if (matches[i].sameTeam) {
-                    matchOutput += ' <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> ';
-                } else {
-                    matchOutput += ' <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> ';
+                    matchOutput += ' <span class="glyphicon glyphicon-thumbs-up text-success" aria-hidden="true" title="Same Team"></span> ';
                 }
-                if (matches[i].result == 1) {
-                    matchOutput += ' <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ';
-                } else {
-                    matchOutput += ' <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> ';
-                }
-                matchOutput += matches[i].kd;
                 matchOutput += '</div>';
+                matchOutput += '<div class="fillCell">';
+                if (matches[i].result == 1) {
+                    matchOutput += ' <span class="glyphicon glyphicon-ok text-success" aria-hidden="true" title="Win"></span> ';
+                }
+                matchOutput += '</div>';
+                matchOutput += '<div class="fillCell">';
+                if (Number(matches[i].kd) >= 1) {
+                    matchOutput += ' <span class="text-success" aria-hidden="true">' + matches[i].kd + '</span> ';
+                } else {
+                    matchOutput += ' <span class="text-danger" aria-hidden="true">' + matches[i].kd + '</span> ';
+                }
+                matchOutput += '</div>';
+                matchOutput += '</div></div>';
                 matchOutput += '<div class="panel-collapse collapse" id="cd-' + matches[i].id + '"><div class="panel-body">';
                 matchOutput += '<input type="hidden" value="' + matches[i].id + '" />';
                 matchOutput += '<span class="loading-spinner" style="display: none;"></span>';

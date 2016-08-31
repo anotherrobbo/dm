@@ -1,6 +1,9 @@
 // Place all the styles related to the match controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.match {
+    position: relative;
+}
 
 .match>.panel-heading {
     cursor: pointer;
@@ -14,12 +17,34 @@
     padding: 0px;
 }
 
-.match th, .match td {
-    padding: 5px !important;
+table.players > thead > tr > th, table.players > tbody > tr > td {
+    padding: 0px 5px 0px 5px;
+    vertical-align: middle;
 }
 
-.iconCell {
+table.players > tbody > tr > td.iconCell {
+    padding: 2px 5px 2px 5px;
     width: 56px;
+}
+
+.tableDiv {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tableDiv > div {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.activityCell {
+    width: 50px;
+}
+
+.dateCell {
+    width: 155px;
 }
 
 .match .loading-spinner {
@@ -27,8 +52,8 @@
 }
 
 .match-link {
-    float: right;
-    position: relative;
-    top: 5px;
-    right: 5px;
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    font-size: smaller;
 }
