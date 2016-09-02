@@ -1,19 +1,3 @@
-var days = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
-
-function convertDateString(dateString) {
-    var epochMillis = Date.parse(dateString);
-    var localeDate = new Date(epochMillis);
-    return formatDate(localeDate);
-}
-
-function formatDate(date) {
-    return days[date.getDay()] + " " + date.getFullYear() + "/" + padNum(date.getMonth() + 1) + "/" + padNum(date.getDate()) + " " + padNum(date.getHours()) + ":" + padNum(date.getMinutes());
-}
-
-function padNum(num) {
-    return num < 10 ? "0" + num : num;
-}
-
 (function($){  
 	var methods = {
 		// Initialise plugin.
@@ -32,7 +16,7 @@ function padNum(num) {
 					methods.poll(data);
 				},
 				error:function(jqXHR){
-				    $('#matchCount').html('UNAVAILABLE');
+				    $('#matchCount').html(errorDiv('UNAVAILABLE'));
 				}
 			});
         },
@@ -44,6 +28,10 @@ function padNum(num) {
 				success:function(data){
                     if (data.result) {
                         methods.show(data.result);
+                    } else if (data.error) {
+                        // Display the error
+                        $('.progress').hide();
+                        $('#matchCount').html(errorDiv(data.error));
                     } else {
                         // Update progress bar
                         var percent = Math.max(5, (data.progress / data.total) * 100);

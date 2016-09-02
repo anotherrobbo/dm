@@ -18,7 +18,7 @@
 				success:function(data){
 					$('.loading-spinner').hide();
                     if (data.length == 0) {
-                        $('#results').html('NO RESULTS');
+                        $('#results').html(infoDiv('NO RESULTS'));
                     } else if (data.length == 1) {
                         methods.load(data[0]);
                     } else {
@@ -27,7 +27,7 @@
 				},
 				error:function(jqXHR){
 				    $('.loading-spinner').hide();
-                    $('#results').html('UNAVAILABLE');
+                    $('#results').html(errorDiv('UNAVAILABLE'));
 				}
 			});
 		},

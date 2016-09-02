@@ -33,3 +33,11 @@ function formatDate(date) {
 function padNum(num) {
     return num < 10 ? "0" + num : num;
 }
+
+function infoDiv(infoMessage) {
+    return "<div class='alert alert-info'>" + infoMessage + "</div>";
+}
+
+function errorDiv(errorMessage) {
+    return "<div class='alert alert-danger'>" + errorMessage + "</div>";
+}

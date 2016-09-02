@@ -8,10 +8,13 @@ class PlayerController < ApplicationController
             pr.systemCode = getSystemCode(system)
             
             info = getInfo(pr.systemCode, name)
-            pr.name = info["displayName"]
-            pr.id = info["membershipId"]
-            
-            pr.save
+            if info != nil
+                pr.name = info["displayName"]
+                pr.id = info["membershipId"]
+                pr.save
+            else
+                pr = nil
+            end
         end
         
         return pr
