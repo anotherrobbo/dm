@@ -6,12 +6,12 @@ class MatchJob < PlayerController
     include SuckerPunch::Job
     workers 4
 
-    def perform(procId, systemCode, pr1, pr2, c1, c2)
-        g1 = getGamesForAccount(procId, systemCode, pr1, c1)
+    def perform(procId, systemCode, pr1, pr2, c1, c2, forceCheck)
+        g1 = getGamesForAccount(procId, systemCode, pr1, c1, forceCheck)
         if pr1.id == pr2.id
             matches = getMatches(g1, g1)
         else
-            g2 = getGamesForAccount(procId, systemCode, pr2, c2)
+            g2 = getGamesForAccount(procId, systemCode, pr2, c2, forceCheck)
             matches = getMatches(g1, g2)
         end
         # Reverse sort by period
@@ -22,7 +22,7 @@ class MatchJob < PlayerController
         Rails.cache.write(procId, proc, expires_in: 5.minutes)
     end
     
-    private def getGamesForAccount(procId, systemCode, pr, chars)
+    private def getGamesForAccount(procId, systemCode, pr, chars, forceCheck)
         count = 250
         games = Hash.new
         chars.each do |char|
@@ -39,16 +39,12 @@ class MatchJob < PlayerController
             end
             
             # check if we already found records in the last 10 minutes
-            if activityRecord.updated_at != nil && activityRecord.updated_at > 10.minutes.ago
+            if activityRecord.updated_at != nil && activityRecord.updated_at > 10.minutes.ago && !forceCheck
                 @@log.info("Last updated less than 10 minutes ago so skipping load - #{activityRecord.updated_at}")
             else
                 activityRecord.activities = getGamesForChar(systemCode, pr.id, activityRecord, count)
-                #@@log.info(activityRecord.changed?)
-                if activityRecord.new_record? || activityRecord.changed?
-                    activityRecord.save!
-                else
-                    activityRecord.touch
-                end
+                # Kick off a new job to save the activity record
+                SaveJob.perform_async(activityRecord)
             end
             games.merge!(activityRecord.activities)
             # TODO sync this if we're doing it on multiple threads
@@ -57,7 +53,8 @@ class MatchJob < PlayerController
             Rails.cache.write(procId, proc, expires_in: 5.minutes)
         end
         pr.increment(:matchesCount)
-        pr.save
+        # Kick off a new job to save the player record
+        SaveJob.perform_async(pr)
         return games
     end
     
