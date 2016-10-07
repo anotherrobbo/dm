@@ -8,11 +8,10 @@ class ApplicationController < ActionController::Base
   @@log = Logger.new(STDOUT)
   
   protected def jsonCall(url)
-    #@@log.debug("calling #{url}")
     escapedUrl = URI.escape(url)
     @@log.debug("calling #{escapedUrl}")
     response = RestClient.get(escapedUrl, {"X-API-Key" => @@apikey})
-    #@@log.debug("received response")
+    @@log.debug("received response")
     json = response.body
     data = JSON.parse(json)
     return data

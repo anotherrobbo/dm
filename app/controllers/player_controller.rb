@@ -91,8 +91,10 @@ class PlayerController < ApplicationController
         return Rails.cache.fetch("#{type}-#{hash}") do
             @@log.info("Loading #{type}/#{hash}")
             data = jsonCall(@@bungieURL + "/Platform/Destiny/Manifest/#{type}/#{hash}/")
-            ##@@log.info(data["Response"]["data"])
-            data["Response"]["data"][typeDef]
+            #@@log.info(data)
+            if noErrors(data)
+                data["Response"]["data"][typeDef]
+            end
         end
     end
 

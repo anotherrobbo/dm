@@ -17,6 +17,8 @@ gem 'puma', '~> 3.0'
 gem 'rest-client', '~> 1.8'
 # ADDED Suckerpunch for background jobs
 gem 'sucker_punch', '~> 2.0'
+# ADDED for unzipping manifest files
+gem 'rubyzip'
 
 # ADDED Bootstrap
 gem 'bootstrap-sass', '~> 3.3.6'

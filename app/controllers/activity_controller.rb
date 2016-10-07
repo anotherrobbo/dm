@@ -22,10 +22,20 @@ class ActivityController < PlayerController
         a.id = id
         a.period = DateTime.parse(act["period"])
         useType = act["activityDetails"]["activityTypeHashOverride"] > 0 && act["activityDetails"]["mode"] != 4
-        a.prefix = useType ? "activityType" : "activity"
-        a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
-        a.activityIcon = @@bungieURL + getDef(a.prefix, a.activityHash)["icon"]
-        a.activityName = getDef(a.prefix, a.activityHash)["#{a.prefix}Name"]
+        a.activityTypeHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : nil
+        a.activityHash = act["activityDetails"]["referenceId"]
+        a.activityName = getDef("activity", a.activityHash)["activityName"]
+        iconUrl = nil
+        if a.activityTypeHash != nil
+            a.activityType = getDef("activityType", a.activityTypeHash)["activityTypeName"]
+            iconUrl = getDef("activityType", a.activityTypeHash)["icon"]
+        else 
+            iconUrl = getDef("activity", a.activityHash)["icon"]
+        end
+        # iconUrl can be nil if activity is classified
+        if iconUrl != nil
+            a.activityIcon = @@bungieURL + iconUrl
+        end
         return a
     end
     

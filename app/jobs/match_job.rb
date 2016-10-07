@@ -94,8 +94,8 @@ class MatchJob < PlayerController
                 a = Activity.new
                 a.id = lastid
                 a.period = DateTime.parse(act["period"])
-                a.prefix = useType ? "activityType" : "activity"
-                a.activityHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : act["activityDetails"]["referenceId"]
+                a.activityTypeHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : nil
+                a.activityHash = act["activityDetails"]["referenceId"]
                 a.result = act["values"]["standing"] != nil ? 1 - act["values"]["standing"]["basic"]["value"] : act["values"]["completed"]["basic"]["value"]
                 a.team = act["values"]["team"] != nil ? act["values"]["team"]["basic"]["displayValue"][0] : nil
                 a.kd = act["values"]["killsDeathsRatio"] != nil ? act["values"]["killsDeathsRatio"]["basic"]["displayValue"] : nil
@@ -118,10 +118,20 @@ class MatchJob < PlayerController
                 a = ActivityDetail.new
                 a.id = g.id
                 a.period = g.period
-                a.prefix = g.prefix
+                a.activityTypeHash = g.activityTypeHash
                 a.activityHash = g.activityHash
-                a.activityIcon = @@bungieURL + getDef(a.prefix, a.activityHash)["icon"]
-                a.activityName = getDef(a.prefix, a.activityHash)["#{a.prefix}Name"]
+                a.activityName = getDef("activity", a.activityHash)["activityName"]
+                iconUrl = nil
+                if a.activityTypeHash != nil
+                    a.activityType = getDef("activityType", a.activityTypeHash)["activityTypeName"]
+                    iconUrl = getDef("activityType", a.activityTypeHash)["icon"]
+                else 
+                    iconUrl = getDef("activity", a.activityHash)["icon"]
+                end
+                # iconUrl can be nil if activity is classified
+                if iconUrl != nil
+                    a.activityIcon = @@bungieURL + iconUrl
+                end
                 a.result = g.result
                 a.team = g.team
                 a.kd = g.kd

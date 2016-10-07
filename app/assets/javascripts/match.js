@@ -52,10 +52,11 @@
         show: function(matches) {
             var matchOutput = '';
             for (i in matches) {
+                var title = matches[i].activityType ? matches[i].activityType + ' - ' + matches[i].activityName : matches[i].activityName;
                 matchOutput += '<div class="panel panel-default match">';
                 matchOutput += '<a class="match-link" href="' + rootUrl + 'match/single/' + matches[i].id + '" target="_blank"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></a>';
                 matchOutput += '<div class="panel-heading" data-toggle="collapse" data-target="#cd-' + matches[i].id + '"><div class="tableDiv">'
-                matchOutput += '<div class="activityCell"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + matches[i].activityName + '" /></div>';
+                matchOutput += '<div class="activityCell"><img class="activityIcon" src="' + matches[i].activityIcon + '" title="' + title + '" /></div>';
                 matchOutput += '<div class="dateCell">' + convertDateString(matches[i].period) + '</div>';
                 matchOutput += '<div class="fillCell">';
                 if (matches[i].sameTeam) {
