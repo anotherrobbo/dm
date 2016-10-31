@@ -8,7 +8,7 @@ gem 'rails', '~> 5.0.0'
 # Use PostgreSQL as the PRODUCTION database for Active Record
 gem 'pg', group: :production
 # Use Sqlite3 as the DEV database for Active Record, all environments need it for manifest loading
-#gem 'sqlite3', '1.3.12'
+gem 'sqlite3', '1.3.12'
 
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
