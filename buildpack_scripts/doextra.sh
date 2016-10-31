@@ -11,7 +11,7 @@ echo rails_root is
 echo $rails_root
 cd ${rails_root}/vendor/
 
-# I should install sqlite3 software locally under Rails.root
+# I should install sqlite3 software locally under rails_root
 
 mkdir -p ${rails_root}/vendor/sqlite3
 tar zxf  ${rails_root}/vendor/sqlite-autoconf-3130000.tar.gz
@@ -22,7 +22,8 @@ make install
 
 # I should be able to gem install sqlite3 now
 echo Now installing sqlite3...
-gem install sqlite3 -- --with-sqlite3-dir=${rails_root}/vendor/sqlite3
-gem list    sqlite3
+cd ${rails_root}
+gem install sqlite3 -- --with-sqlite3-dir=./vendor/sqlite3
+gem list sqlite3
 
 exit
