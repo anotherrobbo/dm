@@ -7,10 +7,9 @@
 # heroku-buildpack is software used by heroku to help deploy applications.
 rails_root=`pwd`
 
-echo rails_root is
-echo $rails_root
-echo $GEM_PATH
-echo $GEM_HOME
+echo rails_root is $rails_root
+echo gem path is $GEM_PATH
+echo gem home is $GEM_HOME
 cd ${rails_root}/vendor/
 
 # I should install sqlite3 software locally under rails_root
