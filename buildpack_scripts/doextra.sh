@@ -10,11 +10,11 @@ rails_root=`pwd`
 echo rails_root is $rails_root
 echo gem path is $GEM_PATH
 echo gem home is $GEM_HOME
+gem environment
+gem list
 cd ${rails_root}/vendor/
-ls /app
 
-# I should install sqlite3 software locally under rails_root
-
+# Install sqlite3 software locally under rails_root
 mkdir -p ${rails_root}/vendor/sqlite3
 tar zxf  ${rails_root}/vendor/sqlite-autoconf-3130000.tar.gz
 cd sqlite-autoconf-3130000/
@@ -22,8 +22,7 @@ cd sqlite-autoconf-3130000/
 make
 make install
 
-# I should be able to gem install sqlite3 now
-gem list sqlite3
+# gem install sqlite3
 echo Now installing sqlite3...
 gem install sqlite3 -v '1.3.12' -- --with-sqlite3-dir=${rails_root}/vendor/sqlite3
 gem list sqlite3
