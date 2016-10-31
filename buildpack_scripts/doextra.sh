@@ -11,7 +11,7 @@ echo rails_root is $rails_root
 echo gem path is $GEM_PATH
 echo gem home is $GEM_HOME
 cd ${rails_root}/vendor/
-ls bundle
+ls /app
 
 # I should install sqlite3 software locally under rails_root
 
