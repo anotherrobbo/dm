@@ -14,5 +14,14 @@ class AdminController < ApplicationController
     def playerStats
         @model = PlayerRecord.order(overviewCount: :desc, matchesCount: :desc)
     end
+    
+    def bulkLoad
+        proc = BulkLoadProcess.new
+        proc.id = SecureRandom.uuid
+        proc.running = true;
+        Rails.cache.write(proc.id, proc, expires_in: 5.minutes)
+        BulkLoadJob.perform_async(proc.id)
+        @model = proc
+    end
 
 end

@@ -23,7 +23,7 @@
         
         poll: function(processId) {
             $.ajax({
-				url:rootUrl + 'match/poll/' + processId,
+				url:rootUrl + 'process/poll/' + processId,
 				type:'GET',
 				success:function(data){
                     if (data.result) {

@@ -10,6 +10,7 @@
                         <th class="text-right">M</th>
                         <th class="text-right">Created</th>
                         <th class="text-right">Updated</th>
+                        <th class="text-right">ARs</th>
                     </tr></thead>
                     <tbody>
                     <% @model.each do |p_rec| %>
@@ -19,6 +20,7 @@
                             <td class="text-right"><%= p_rec.matchesCount %></td>
                             <td class="text-right dateCell"><%= p_rec.created_at %></td>
                             <td class="text-right dateCell"><%= p_rec.updated_at %></td>
+                            <td class="text-right"><%= p_rec.activityRecords.length %></td>
                         </tr>
                     <% end %>
                     </tbody>
