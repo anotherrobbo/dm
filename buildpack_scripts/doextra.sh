@@ -14,7 +14,7 @@ rails_root=`pwd`
 #gem list
 echo Does sqlite3 currently exist?
 gem list sqlite3
-if [ -n $(gem list sqlite3) ]; then
+if [ -n "$(gem list sqlite3)" ]; then
     echo sqlite3 exists, skipping install; exit 0;
 else
     echo no sqlite3 gem detected, continuing install
