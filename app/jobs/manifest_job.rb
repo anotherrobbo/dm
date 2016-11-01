@@ -11,7 +11,7 @@ class ManifestJob < ApplicationController
         @@log.info("Checking last manifest updated...")
         lastUpdate = Rails.cache.read("MANIFEST_UPDATE_DATE")
         
-        if lastUpdate != nil && lastUpdate > 1.second.ago
+        if lastUpdate != nil && lastUpdate > 1.day.ago
             @@log.info("Last updated less than 1 day ago so skipping load - #{lastUpdate}")
             secs = (lastUpdate + (24 * 60 * 60)) - Time.now
             @@log.info("Scheduling next refresh for #{secs} seconds from now")
