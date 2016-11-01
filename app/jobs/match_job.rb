@@ -110,6 +110,7 @@ class MatchJob < PlayerController
     end
     
     private def getMatches(g1, g2)
+        @@log.info("Picking out matches...")
         h1 = g1
         h2 = g2
         matches = Array.new
@@ -139,6 +140,7 @@ class MatchJob < PlayerController
                 matches.push(a)
             end
         end
+        @@log.info("#{matches.length} Matches picked!")
         return matches
     end
 
