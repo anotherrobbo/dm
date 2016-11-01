@@ -9,8 +9,10 @@ class MatchJob < PlayerController
     def perform(procId, systemCode, pr1, pr2, c1, c2, forceCheck)
         g1 = getGamesForAccount(procId, systemCode, pr1, c1, forceCheck)
         if pr1.id == pr2.id
+            @@log.info("Same id detected, getting matches with itself")
             matches = getMatches(g1, g1)
         else
+            @@log.info("Different id detected, getting matches with other player")
             g2 = getGamesForAccount(procId, systemCode, pr2, c2, forceCheck)
             matches = getMatches(g1, g2)
         end
@@ -54,7 +56,9 @@ class MatchJob < PlayerController
         end
         pr.increment(:matchesCount)
         # Kick off a new job to save the player record
+        @@log.info("Saving player async...")
         SaveJob.perform_async(pr)
+        @@log.info("Saved player async call made, returning games now.")
         return games
     end
     
