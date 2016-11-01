@@ -25,9 +25,10 @@
         showActivityHeader: function(data) {
             var matchOutput = '';
             matchOutput += '<div class="panel panel-default match">';
-            matchOutput += '<div class="panel-heading"><img class="activityIcon" src="' + data.activityIcon + '" title="' + data.activityName + '" /> ';
-            matchOutput += convertDateString(data.period);
-            matchOutput += '</div>';
+            matchOutput += '<div class="panel-heading"><div class="tableDiv"><div class="activityCell"><img class="activityIcon" src="' + data.activityIcon + '" title="' + data.activityName + '" /></div>';
+            matchOutput += '<div class="dateCell">' + convertDateString(data.period) + '</div>';
+            matchOutput += '<div class="fillCell">' + data.duration + '</div>';
+            matchOutput += '</div></div>';
             matchOutput += '<div class="panel-body" id="match-detail">';
             matchOutput += '</div>';
             matchOutput += '</div>';

@@ -25,6 +25,7 @@ class ActivityController < PlayerController
         a.activityTypeHash = useType ? act["activityDetails"]["activityTypeHashOverride"] : nil
         a.activityHash = act["activityDetails"]["referenceId"]
         a.activityName = getDef("activity", a.activityHash)["activityName"]
+        a.duration = getDuration(data["Response"]["data"])
         iconUrl = nil
         if a.activityTypeHash != nil
             a.activityType = getDef("activityType", a.activityTypeHash)["activityTypeName"]
@@ -81,6 +82,12 @@ class ActivityController < PlayerController
         # Sort by score then kills
         players.sort! { |a, b| [b.scoreVal,b.kVal] <=> [a.scoreVal,a.kVal] }
         return players
+    end
+    
+    private def getDuration(data)
+        playerEntry = data["entries"][0]
+        duration = playerEntry["extended"]["values"]["totalActivityDurationSeconds"]["basic"]["displayValue"]
+        return duration
     end
 
 end

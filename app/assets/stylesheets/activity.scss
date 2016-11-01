@@ -19,3 +19,23 @@ table.players > tbody > tr > td.iconCell {
     padding: 2px 5px 2px 5px;
     width: 56px;
 }
+
+.tableDiv {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tableDiv > div {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.activityCell {
+    width: 50px;
+}
+
+.dateCell {
+    width: 155px;
+}
