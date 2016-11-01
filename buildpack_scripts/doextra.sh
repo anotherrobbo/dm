@@ -24,8 +24,7 @@ make install
 
 # gem install sqlite3
 echo Now installing sqlite3...
-ls ${rails_root}/vendor
-gem install sqlite3 -- --with-sqlite3-dir=${rails_root}/vendor/sqlite3
-gem list sqlite3
+$GEM_HOME/bin/gem install sqlite3 -- --with-sqlite3-dir=${rails_root}/vendor/sqlite3
+$GEM_HOME/bin/gem list sqlite3
 
 exit
