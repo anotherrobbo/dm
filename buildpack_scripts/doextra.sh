@@ -14,6 +14,11 @@ rails_root=`pwd`
 #gem list
 echo Does sqlite3 currently exist?
 gem list sqlite3
+if [ -n gem list sqlite3 ]; then
+    echo sqlite3 exists, skipping install; exit 0;
+else
+    echo no sqlite3 gem detected, continuing install
+fi
 cd ${rails_root}/vendor/
 
 # Install sqlite3 software locally under rails_root
@@ -31,4 +36,4 @@ cd ${rails_root}
 gem install sqlite3 -- --with-sqlite3-dir=${rails_root}/vendor/sqlite3
 gem list
 
-exit
+exit 0
