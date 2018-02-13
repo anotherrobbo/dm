@@ -1,28 +1,9 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Original Ruby on Rails version of http://www.destinymatches.com
 
-Things you may want to cover:
+The purpose of this site is to find matches played with other / against players in the game Destiny.
 
-* Ruby version
+The purpose of this project was to experiment with Ruby on Rails and compare it to Java.
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+This has since been rewritten in Java for quick support of Destiny 2.  As there were people using the site I wanted to ensure I could add functionality as quickly and with as little down time as possible so I decided to fallback to Java where I am most experienced.
